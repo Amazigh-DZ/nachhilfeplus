@@ -1,4 +1,4 @@
-ï»¿import { Phone, Mail, MapPin, Clock, Send, Instagram, Facebook, } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, Instagram, Facebook, } from 'lucide-react';
 import { FaWhatsapp, FaTelegramPlane } from "react-icons/fa";
 import { SiSignal } from "react-icons/si";
 
@@ -19,7 +19,7 @@ const socialLinks = [
             UNVERBINDLICHE <span className="gradient-text">ANFRAGE</span>
           </h2>
           <p className="text-slate-400 max-w-2xl mx-auto text-lg font-medium">
-            Hast du Fragen oder mÃ¶chtest direkt starten? Schreib uns eine Nachricht oder ruf uns an. Wir freuen uns auf dich!
+            Hast du Fragen oder möchtest direkt starten? Schreib uns eine Nachricht oder ruf uns an. Wir freuen uns auf dich!
           </p>
         </div>
 
@@ -56,7 +56,7 @@ const socialLinks = [
                   </div>
                   <div>
                     <div className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Standort</div>
-                    <div className="text-xl font-bold text-white">Gotmarstrasse 3, 37073 GÃ¶ttingen</div>
+                    <div className="text-xl font-bold text-white">Gotmarstrasse 3, 37073 Göttingen</div>
                   </div>
                 </div>
 
@@ -65,7 +65,7 @@ const socialLinks = [
                     <Clock className="w-6 h-6" />
                   </div>
                   <div>
-                    <div className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Ã–ffnungszeiten</div>
+                    <div className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Öffnungszeiten</div>
                     <div className="text-xl font-bold text-white">Mo - Fr: 09:00 - 19:00 Uhr</div>
                   </div>
                 </div>
@@ -151,7 +151,7 @@ const socialLinks = [
 
               <div className="space-y-2">
                 <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Deine Nachricht</label>
-                <textarea rows={4} className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-bold outline-none focus:border-primary transition-all resize-none" placeholder="Wie kÃ¶nnen wir dir helfen?"></textarea>
+                <textarea rows={4} className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-bold outline-none focus:border-primary transition-all resize-none" placeholder="Wie können wir dir helfen?"></textarea>
               </div>
 
               <button className="w-full bg-white text-black py-5 rounded-xl font-black text-xl shadow-xl hover:bg-primary hover:text-white transition-all uppercase tracking-tighter flex items-center justify-center gap-3">
@@ -167,3 +167,4 @@ const socialLinks = [
 };
 
 export default Contact;
+

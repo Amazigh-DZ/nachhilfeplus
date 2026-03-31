@@ -219,3 +219,4 @@ export const ApplicationForm = ({ isOpen, onClose, jobTitle }: ApplicationFormPr
 };
 
 export default ApplicationForm;
+
