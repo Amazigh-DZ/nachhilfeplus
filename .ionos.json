@@ -1,28 +1,15 @@
 {
-  "buildpack": "static-site",
-  "buildPack": "static-site",
-  "name": "NachhilfePlus",
-  "source": "GitHub",
-  "distDir": "dist",
-  "buildCommand": "npm run build",
-  "runtimeVersion": "18.17",
-  "env": [
-    {
-      "key": "NODE_ENV",
-      "value": "production"
-    }
-  ],
-  "documentRoot": "dist",
-  "scripts": {
-    "build": "npm run build",
-    "install": "npm ci"
+  "buildpack": "node",
+  "build": {
+    "engine": "npm",
+    "commands": [
+      "npm ci",
+      "npm run build"
+    ]
   },
-  "excludedFiles": [
-    "node_modules",
-    ".git",
-    ".gitignore",
-    "src",
-    "public",
-    "README.md"
-  ]
+  "distDir": "dist",
+  "documentRoot": "dist",
+  "env": {
+    "NODE_ENV": "production"
+  }
 }
