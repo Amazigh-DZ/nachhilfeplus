@@ -1,0 +1,8 @@
+name: Orchestration
+on:
+  push:
+    branches:
+      - main
+jobs:
+  call-build:
+    uses: ./.github/workflows/nachhilfe-plus-build.yaml

@@ -1,0 +1,9 @@
+name: Deploy to IONOS
+on:
+  workflow_call:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        run: echo "Deploy placeholder - IONOS Deploy Now handles this"
