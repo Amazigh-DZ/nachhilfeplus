@@ -1,15 +1,18 @@
 {
   "buildpack": "node",
+  "name": "nachhilfe-plus",
   "build": {
     "engine": "npm",
     "commands": [
-      "npm ci",
+      "npm install",
       "npm run build"
     ]
   },
-  "distDir": "dist",
-  "documentRoot": "dist",
-  "env": {
-    "NODE_ENV": "production"
-  }
+  "public": "dist",
+  "env": [
+    {
+      "key": "NODE_ENV",
+      "value": "production"
+    }
+  ]
 }
