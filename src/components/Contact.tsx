@@ -1,8 +1,119 @@
-import { Phone, Mail, MapPin, Clock, Send, Instagram, Facebook, } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, Instagram, Facebook, AlertCircle, CheckCircle } from 'lucide-react';
 import { FaWhatsapp, FaTelegramPlane } from "react-icons/fa";
 import { SiSignal } from "react-icons/si";
+import { useState } from 'react';
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    subject: 'Allgemeine Anfrage',
+    message: '',
+    honeypot: ''
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const validateEmail = (email: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const validateForm = () => {
+    if (!formData.firstName.trim()) {
+      setErrorMessage('Bitte gib deinen Vornamen ein');
+      return false;
+    }
+    if (!formData.lastName.trim()) {
+      setErrorMessage('Bitte gib deinen Nachnamen ein');
+      return false;
+    }
+    if (!validateEmail(formData.email)) {
+      setErrorMessage('Bitte gib eine gÃ¼ltige E-Mail-Adresse ein');
+      return false;
+    }
+    if (!formData.phone.trim()) {
+      setErrorMessage('Bitte gib deine Telefonnummer ein');
+      return false;
+    }
+    if (!formData.message.trim() || formData.message.trim().length < 10) {
+      setErrorMessage('Bitte gib eine Nachricht ein (mindestens 10 Zeichen)');
+      return false;
+    }
+    return true;
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setErrorMessage('');
+    setSuccessMessage('');
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Honeypot check (Spamschutz)
+    if (formData.honeypot) {
+      console.warn('Honeypot triggered');
+      return;
+    }
+
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
+    setErrorMessage('');
+    setSuccessMessage('');
+
+    try {
+      // Backend-URL anpassen nach IONOS-Deployment
+      const response = await fetch('/contact.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: formData.firstName.trim(),
+          lastName: formData.lastName.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          subject: formData.subject,
+          message: formData.message.trim()
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSuccessMessage('Vielen Dank! Deine Nachricht wurde erfolgreich gesendet. Wir melden uns in KÃ¼rze bei dir!');
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          subject: 'Allgemeine Anfrage',
+          message: '',
+          honeypot: ''
+        });
+      } else {
+        setErrorMessage(data.message || 'Beim Senden ist ein Fehler aufgetreten. Bitte versuche es spÃ¤ter erneut.');
+      }
+    } catch (err) {
+      console.error('Form submission error:', err);
+      setErrorMessage('Es gab ein Problem beim Senden. Bitte versuche es spÃ¤ter erneut oder kontaktiere uns direkt.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
 const socialLinks = [
   { icon: Instagram, href: "https://instagram.com/deinprofil", label: "Instagram" },
   { icon: Facebook, href: "https://facebook.com/deinprofil", label: "Facebook" },
@@ -19,7 +130,7 @@ const socialLinks = [
             UNVERBINDLICHE <span className="gradient-text">ANFRAGE</span>
           </h2>
           <p className="text-slate-400 max-w-2xl mx-auto text-lg font-medium">
-            Hast du Fragen oder möchtest direkt starten? Schreib uns eine Nachricht oder ruf uns an. Wir freuen uns auf dich!
+            Hast du Fragen oder mï¿½chtest direkt starten? Schreib uns eine Nachricht oder ruf uns an. Wir freuen uns auf dich!
           </p>
         </div>
 
@@ -56,7 +167,7 @@ const socialLinks = [
                   </div>
                   <div>
                     <div className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Standort</div>
-                    <div className="text-xl font-bold text-white">Gotmarstrasse 3, 37073 Göttingen</div>
+                    <div className="text-xl font-bold text-white">Gotmarstrasse 3, 37073 Gï¿½ttingen</div>
                   </div>
                 </div>
 
@@ -65,7 +176,7 @@ const socialLinks = [
                     <Clock className="w-6 h-6" />
                   </div>
                   <div>
-                    <div className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Öffnungszeiten</div>
+                    <div className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">ï¿½ffnungszeiten</div>
                     <div className="text-xl font-bold text-white">Mo - Fr: 09:00 - 19:00 Uhr</div>
                   </div>
                 </div>
@@ -116,32 +227,98 @@ const socialLinks = [
           {/* Contact Form */}
           <div className="glass p-10 rounded-[2.5rem] border border-white/5">
             <h3 className="text-2xl font-black mb-8 uppercase tracking-tighter">Schreib uns</h3>
-            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+            
+            {/* Success Message */}
+            {successMessage && (
+              <div className="mb-6 p-4 bg-green-500/20 border border-green-500/50 rounded-xl flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-green-400 shrink-0 mt-0.5" />
+                <p className="text-green-300 font-bold text-sm">{successMessage}</p>
+              </div>
+            )}
+
+            {/* Error Message */}
+            {errorMessage && (
+              <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-xl flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+                <p className="text-red-300 font-bold text-sm">{errorMessage}</p>
+              </div>
+            )}
+
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {/* Honeypot-Feld (versteckt fÃ¼r Spam-Schutz) */}
+              <input 
+                type="text" 
+                name="honeypot" 
+                value={formData.honeypot} 
+                onChange={handleChange}
+                style={{ display: 'none' }} 
+                tabIndex={-1}
+                autoComplete="off"
+              />
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Vorname*</label>
-                  <input required type="text" className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-bold outline-none focus:border-primary transition-all" placeholder="Max" />
+                  <input 
+                    type="text" 
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    disabled={loading}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-bold outline-none focus:border-primary transition-all disabled:opacity-50" 
+                    placeholder="Max" 
+                  />
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Nachname*</label>
-                  <input required type="text" className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-bold outline-none focus:border-primary transition-all" placeholder="Mustermann" />
+                  <input 
+                    type="text" 
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    disabled={loading}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-bold outline-none focus:border-primary transition-all disabled:opacity-50" 
+                    placeholder="Mustermann" 
+                  />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">E-Mail Adresse*</label>
-                  <input required type="email" className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-bold outline-none focus:border-primary transition-all" placeholder="max@beispiel.de" />
+                  <input 
+                    type="email" 
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    disabled={loading}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-bold outline-none focus:border-primary transition-all disabled:opacity-50" 
+                    placeholder="max@beispiel.de" 
+                  />
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Telefonnummer*</label>
-                  <input required type="tel" className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-bold outline-none focus:border-primary transition-all" placeholder="+49 123 456789" />
+                  <input 
+                    type="tel" 
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    disabled={loading}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-bold outline-none focus:border-primary transition-all disabled:opacity-50" 
+                    placeholder="+49 123 456789" 
+                  />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Betreff</label>
-                <select className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-bold outline-none focus:border-primary transition-all appearance-none">
+                <select 
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  disabled={loading}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-bold outline-none focus:border-primary transition-all appearance-none disabled:opacity-50"
+                >
                   <option className="bg-slate-900">Allgemeine Anfrage</option>
                   <option className="bg-slate-900">Probestunde vereinbaren</option>
                   <option className="bg-slate-900">Frage zum Angebot</option>
@@ -150,12 +327,24 @@ const socialLinks = [
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Deine Nachricht</label>
-                <textarea rows={4} className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-bold outline-none focus:border-primary transition-all resize-none" placeholder="Wie können wir dir helfen?"></textarea>
+                <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Deine Nachricht*</label>
+                <textarea 
+                  rows={4} 
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  disabled={loading}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-bold outline-none focus:border-primary transition-all resize-none disabled:opacity-50" 
+                  placeholder="Wie kÃ¶nnen wir dir helfen?"
+                />
               </div>
 
-              <button className="w-full bg-white text-black py-5 rounded-xl font-black text-xl shadow-xl hover:bg-primary hover:text-white transition-all uppercase tracking-tighter flex items-center justify-center gap-3">
-                Nachricht Senden
+              <button 
+                type="submit"
+                disabled={loading}
+                className="w-full bg-white text-black py-5 rounded-xl font-black text-xl shadow-xl hover:bg-primary hover:text-white transition-all uppercase tracking-tighter flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Wird gesendet...' : 'Nachricht Senden'}
                 <Send className="w-5 h-5" />
               </button>
             </form>

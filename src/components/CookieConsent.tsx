@@ -112,16 +112,16 @@ const CookieConsent = () => {
             exit={{ y: 100, opacity: 0 }}
             className="fixed bottom-0 left-0 right-0 z-50 p-4"
           >
-            <div className="max-w-7xl mx-auto glass rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
-              <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-6 md:p-8">
-                <div className="flex items-start justify-between gap-6 mb-6">
-                  <div className="flex items-start gap-4 flex-1">
-                    <Shield className="w-6 h-6 text-primary shrink-0 mt-1" />
-                    <div>
-                      <h2 className="text-xl font-black text-white mb-2 uppercase tracking-tight">
+            <div className="max-w-7xl mx-auto glass rounded-xl sm:rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
+              <div className="bg-gradient-to-r from-slate-900 to-slate-800 p-3 sm:p-6 md:p-8">
+                <div className="flex items-start justify-between gap-3 sm:gap-6 mb-4 sm:mb-6">
+                  <div className="flex items-start gap-3 sm:gap-4 flex-1">
+                    <Shield className="w-5 sm:w-6 h-5 sm:h-6 text-primary shrink-0 mt-1" />
+                    <div className="min-w-0">
+                      <h2 className="text-base sm:text-xl font-black text-white mb-1 sm:mb-2 uppercase tracking-tight">
                         Cookie-Einstellungen
                       </h2>
-                      <p className="text-sm text-slate-400 leading-relaxed">
+                      <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
                         Wir verwenden Cookies, um dein Nutzererlebnis zu verbessern, Inhalte zu personalisieren und unseren Service zu optimieren. 
                         Mit deinem Einverständnis werden auch Analyse- und Marketing-Cookies gespeichert.
                       </p>
@@ -135,7 +135,7 @@ const CookieConsent = () => {
                   </button>
                 </div>
 
-                <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-4 sm:mt-6">
                   <button
                     onClick={handleRejectAll}
                     className="px-6 py-3 rounded-lg border border-white/20 text-white font-bold hover:bg-white/10 transition-all uppercase text-sm tracking-tight"

@@ -214,21 +214,21 @@ const DatenschutzContent = ({ isModal }: { isModal: boolean }) => (
 const Datenschutz = ({ onClose, isModal = false, onBack }: DatenschutzProps) => {
   if (isModal) {
     return (
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/10 shadow-2xl">
-          <div className="sticky top-0 flex justify-between items-center p-6 border-b border-white/10 bg-slate-900/95 backdrop-blur-sm">
-            <h1 className="text-2xl font-black uppercase text-white">Datenschutzerklärung</h1>
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
+        <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl sm:rounded-2xl max-w-2xl w-full max-h-[95vh] overflow-y-auto border border-white/10 shadow-2xl">
+          <div className="sticky top-0 flex justify-between items-center p-4 sm:p-6 border-b border-white/10 bg-slate-900/95 backdrop-blur-sm gap-2">
+            <h1 className="text-lg sm:text-2xl font-black uppercase text-white">Datenschutzerklärung</h1>
             <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-lg transition-colors text-slate-400 hover:text-white">
               <X className="w-6 h-6" />
             </button>
           </div>
-          <div className="p-6 pb-20">
+          <div className="p-4 sm:p-6 pb-20">
             <DatenschutzContent isModal={true} />
           </div>
-          <div className="sticky bottom-0 flex justify-end p-4 border-t border-white/10 bg-slate-900/95 backdrop-blur-sm">
+          <div className="sticky bottom-0 flex justify-end p-3 sm:p-4 border-t border-white/10 bg-slate-900/95 backdrop-blur-sm gap-2">
             <button
               onClick={onClose}
-              className="px-6 py-2 rounded-lg bg-primary text-white font-bold hover:bg-primary/80 transition-all uppercase text-sm tracking-tight"
+              className="px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg bg-primary text-white font-bold hover:bg-primary/80 transition-all uppercase text-xs sm:text-sm tracking-tight touch-target"
             >
               Schließen
             </button>

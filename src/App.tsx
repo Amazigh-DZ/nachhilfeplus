@@ -410,7 +410,7 @@ const About = () => {
   };
 
   return (
-    <section id="about" className="py-16 px-4">
+    <section id="about" className="py-8 sm:py-12 md:py-16 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <motion.div 
@@ -497,28 +497,28 @@ const HomePage = () => {
   return (
     <main className="flex-grow">
       {/* Hero Section */}
-      <section id="home" className="relative pt-56 pb-32 px-4">
+      <section id="home" className="relative pt-20 sm:pt-32 md:pt-56 pb-12 sm:pb-20 md:pb-32 px-4">
         {/* Background Glows */}
         <div className="fixed top-[-10%] left-[-10%] w-[60%] h-[60%] bg-primary/20 blur-[150px] rounded-full -z-10"></div>
         <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-accent/10 blur-[150px] rounded-full -z-10"></div>
 
         <div className="max-w-7xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="inline-flex items-center px-4 py-2 rounded-full border border-white/10 bg-white/5 text-primary text-xs font-black tracking-[0.2em] uppercase mb-10">
-              <Zap className="w-4 h-4 mr-2 fill-primary" />
-              Mehr verstehen * Beseer bestehen * Mit Nachhilfe Plus
+            <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/10 bg-white/5 text-primary text-xs font-black tracking-[0.2em] uppercase mb-6 sm:mb-8 md:mb-10">
+              <Zap className="w-3 sm:w-4 h-3 sm:h-4 mr-2 fill-primary" />
+              <span className="text-xs sm:text-sm">Mehr verstehen * Besser bestehen * Mit Nachhilfe Plus</span>
             </div>
-            <h1 className="text-6xl md:text-9xl font-black text-white mb-10 leading-[0.9] tracking-tight">
-              Bessere Noten. <span className="gradient-text text-5xl md:text-7xl whitespace-nowrap">Mehr Selbstvertrauen.</span>
+            <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-black text-white mb-4 sm:mb-6 md:mb-8 lg:mb-10 leading-[0.9] tracking-tight">
+              Bessere Noten. <span className="gradient-text text-2xl sm:text-4xl md:text-5xl lg:text-7xl block sm:inline whitespace-nowrap">Mehr Selbstvertrauen.</span>
             </h1>
-            <p className="text-xl text-slate-400 mb-14 leading-relaxed max-w-2xl mx-auto font-medium">
+            <p className="text-xs sm:text-base md:text-lg lg:text-xl text-slate-400 mb-6 sm:mb-8 md:mb-10 lg:mb-14 leading-relaxed max-w-2xl mx-auto font-medium px-2 sm:px-0">
               Bei Nachhilfe Plus bekommst du individuelle Unterstützung, die zu dir passt. Für bessere Noten, mehr Selbstvertrauen und langfristige Lernerfolge.
             </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <button onClick={() => scrollToSection('booking')} className="bg-white text-black px-12 py-6 rounded-2xl font-black text-xl hover:bg-primary hover:text-white transition-all glow uppercase tracking-tighter">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-6 justify-center">
+              <button onClick={() => scrollToSection('booking')} className="bg-white text-black px-6 sm:px-8 md:px-12 py-3 sm:py-4 md:py-6 rounded-lg sm:rounded-xl md:rounded-2xl font-black text-sm sm:text-base md:text-lg lg:text-xl hover:bg-primary hover:text-white transition-all glow uppercase tracking-tighter">
                 Jetzt Starten
               </button>
-              <button onClick={() => scrollToSection('offers')} className="glass text-white px-12 py-6 rounded-2xl font-black text-xl hover:bg-white/10 transition-all uppercase tracking-tighter">
+              <button onClick={() => scrollToSection('offers')} className="glass text-white px-6 sm:px-8 md:px-12 py-3 sm:py-4 md:py-6 rounded-lg sm:rounded-xl md:rounded-2xl font-black text-sm sm:text-base md:text-lg lg:text-xl hover:bg-white/10 transition-all uppercase tracking-tighter">
                 Unser Angebot
               </button>
             </div>
@@ -527,26 +527,27 @@ const HomePage = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-16">
+      <section className="py-8 sm:py-12 md:py-16">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="max-w-7xl mx-auto text-center">
-          <div className="inline-flex items-center px-4 py-2 rounded-full border border-white/10 bg-white/5 text-primary text-xs font-black tracking-[0.2em] uppercase mb-10">
-              <Zap className="w-4 h-4 mr-2 fill-primary" />
+          <div className="max-w-7xl mx-auto text-center mb-8 sm:mb-10 md:mb-12">
+            <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/10 bg-white/5 text-primary text-xs font-black tracking-[0.2em] uppercase">
+              <Zap className="w-3 sm:w-4 h-3 sm:h-4 mr-2 fill-primary" />
               warum Nachhilfe Plus?
-            </div></div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10">
             {[
               { title: "Qualifizierte Lehrkräfte", desc: "Erfahrene und geprüfte Nachhilfelehrer mit pädagogischer Expertise.", icon: <GraduationCap /> },
-              { title: "Online & Präsenz", desc: "Wählen Sie zwischen Unterricht vor Ort oder bequem von zu Hause. Nahtloser Wechsel zwischen Online & Präsenz möglich.", icon: <Globe /> },
+              { title: "Online & Präsenz", desc: "Wählen Sie zwischen Unterricht vor Ort oder bequem von zu Hause. Nahtloser Wechsel möglich.", icon: <Globe /> },
               { title: "Individuelle Förderung", desc: "Maßgeschneiderter Unterricht, der auf die Bedürfnisse jedes Schülers eingeht", icon: <User /> }
             ].map((item, i) => (
-              <div key={i} className="glass p-12 rounded-[2.5rem] hover:border-primary/50 transition-all group relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl -z-10"></div>
-                <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl flex items-center justify-center mb-10 text-primary group-hover:scale-110 transition-transform border border-white/10">
+              <div key={i} className="glass p-6 sm:p-8 md:p-10 lg:p-12 rounded-xl sm:rounded-2xl lg:rounded-[2.5rem] hover:border-primary/50 transition-all group relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 sm:w-32 h-24 sm:h-32 bg-primary/5 blur-3xl -z-10"></div>
+                <div className="w-12 sm:w-14 md:w-16 h-12 sm:h-14 md:h-16 bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg sm:rounded-xl md:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 md:mb-8 lg:mb-10 text-primary group-hover:scale-110 transition-transform border border-white/10">
                   {item.icon}
                 </div>
-                <h3 className="text-2xl font-black mb-6 tracking-tighter uppercase">{item.title}</h3>
-                <p className="text-slate-400 leading-relaxed font-medium">{item.desc}</p>
+                <h3 className="text-lg sm:text-xl md:text-2xl font-black mb-3 sm:mb-4 md:mb-6 tracking-tighter uppercase">{item.title}</h3>
+                <p className="text-xs sm:text-sm md:text-base text-slate-400 leading-relaxed font-medium">{item.desc}</p>
               </div>
             ))}
           </div>
