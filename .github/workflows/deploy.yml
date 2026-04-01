@@ -1,0 +1,22 @@
+name: IONOS Deploy Now
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Deploy to IONOS
+        uses: ionos-deploy-now/deploy-action@v2
+        with:
+          api-key: ${{ secrets.IONOS_API_KEY }}
