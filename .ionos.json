@@ -1,6 +1,6 @@
 {
-  "buildpack": "node",
   "name": "nachhilfe-plus",
+  "buildpack": "node",
   "build": {
     "engine": "npm",
     "commands": [
@@ -8,11 +8,8 @@
       "npm run build"
     ]
   },
-  "public": "dist",
-  "env": [
-    {
-      "key": "NODE_ENV",
-      "value": "production"
-    }
-  ]
+  "outputDir": "dist",
+  "env": {
+    "NODE_ENV": "production"
+  }
 }
