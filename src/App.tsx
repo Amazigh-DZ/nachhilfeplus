@@ -36,6 +36,8 @@ import CookieConsent from './components/CookieConsent';
 
 // --- Components ---
 
+const logoUrl = `${import.meta.env.BASE_URL}images/nachhilfe-plus-logo-quadratisch-removebg-2.png`;
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -112,7 +114,7 @@ const Navbar = () => {
       <div className={`max-w-7xl mx-auto glass rounded-2xl px-6 py-4 flex justify-between items-center transition-all ${scrolled ? 'shadow-2xl border-white/20' : ''}`}>
         <Link to="/" className="flex items-center cursor-pointer">
           <img 
-            src="/images/nachhilfe-plus-logo-quadratisch-removebg-2.png" 
+            src={logoUrl}
             alt="Nachhilfe Plus Logo" 
             className="w-12 h-12 mr-3 drop-shadow-logo object-contain"
           />
@@ -586,7 +588,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex justify-center items-center mb-10">
             <img 
-              src="/images/nachhilfe-plus-logo-quadratisch-removebg-2.png" 
+              src={logoUrl}
               alt="Nachhilfe Plus Logo" 
               className="w-10 h-10 mr-3 drop-shadow-logo object-contain"
             />
