@@ -1,11 +1,10 @@
 import React from "react";
-
-const logoUrl = `${import.meta.env.BASE_URL}images/logo.png`;
+import footerLogo from "../../images/logo.png";
 
 const Footer = ({ onImpressumClick }: { onImpressumClick?: () => void }) => (
   <footer className="bg-surface text-slate-400 py-8 px-4 mt-16 w-full">
     <div className="flex flex-col items-center justify-center w-full">
-      <img src={logoUrl} alt="Nachhilfe Plus Logo" className="h-12 mb-4" />
+      <img src={footerLogo} alt="Nachhilfe Plus Logo" className="h-12 mb-4" />
       <nav className="mb-4">
         <ul className="flex flex-wrap gap-8 justify-center items-center text-sm">
           <li><a href="#">Start</a></li>

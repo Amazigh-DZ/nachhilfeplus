@@ -33,10 +33,9 @@ import Testimonials from './components/Testimonials';
 import Impressum from './components/Impressum';
 import Datenschutz from './components/Datenschutz';
 import CookieConsent from './components/CookieConsent';
+import logoImage from '../images/nachhilfe-plus-logo-quadratisch-removebg-2.png';
 
 // --- Components ---
-
-const logoUrl = `${import.meta.env.BASE_URL}images/nachhilfe-plus-logo-quadratisch-removebg-2.png`;
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -114,7 +113,7 @@ const Navbar = () => {
       <div className={`max-w-7xl mx-auto glass rounded-2xl px-6 py-4 flex justify-between items-center transition-all ${scrolled ? 'shadow-2xl border-white/20' : ''}`}>
         <Link to="/" className="flex items-center cursor-pointer">
           <img 
-            src={logoUrl}
+            src={logoImage}
             alt="Nachhilfe Plus Logo" 
             className="w-12 h-12 mr-3 drop-shadow-logo object-contain"
           />
@@ -588,7 +587,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex justify-center items-center mb-10">
             <img 
-              src={logoUrl}
+              src={logoImage}
               alt="Nachhilfe Plus Logo" 
               className="w-10 h-10 mr-3 drop-shadow-logo object-contain"
             />

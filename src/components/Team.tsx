@@ -3,6 +3,12 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { GraduationCap, ChevronLeft, ChevronRight, ChevronDown, Award } from "lucide-react";
+import nassimImage from "../../images/Nassim.jpg";
+import ariImage from "../../images/ari.jpg";
+import dunjaImage from "../../images/dunja.jpg";
+import dianaImage from "../../images/diana-kanjo.jpg";
+import logoBgImage from "../../images/logobg.png";
+import andreImage from "../../images/andre-becker.jpg";
 
 interface TeamMember {
   name: string;
@@ -12,56 +18,54 @@ interface TeamMember {
   subjects: string;
 }
 
-const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
-
 const team: TeamMember[] = [
   {
     name: "Nassim Ouaissa",
     role: "Gründer & Leitung",
     bio: "Ich bin Nassim Ouaissa, Gründer von Nachhilfe Plus. Ich habe Mathematik und Physik studiert und unterrichte seit über 10 Jahren mit Leidenschaft. Mein Ziel ist es, Schüler:innen nicht nur Wissen, sondern auch Selbstvertrauen und Freude am Lernen zu vermitteln. Moderne Lernmethoden, Geduld und individuelle Förderung stehen für mich im Mittelpunkt.",
-    image: assetUrl("images/Nassim.jpg"),
+    image: nassimImage,
     subjects: "Mathe, Physik, Französisch, Informatik",
   },
   {
     name: "Ari Sadoun",
     role: "Lehrer",
     bio: "Ich bin Ari Sadoun, 24 Jahre alt und studiere in Göttingen Gymnasiallehramt. Zur Zeit befinde ich mich im 3. Mastersemester. Meine Schwerpunkte sind Deutsch, Werte und Normen, Englisch und Mathe.",
-    image: assetUrl("images/ari.jpg"),
+    image: ariImage,
     subjects: "Deutsch, Werte und Normen, Englisch, Mathe",
   },
   {
     name: "Dunja Ben Chaladia",
     role: "Lehrerin",
     bio: "Ich bin Dunja Ben Chaladia und studiere Biologie. Ich unterrichte nicht nur verwandte Fächer wie Chemie und Mathematik, sondern auch Sprachen wie Deutsch, Englisch und Französisch.",
-    image: assetUrl("images/dunja.jpg"),
+    image: dunjaImage,
     subjects: "Biologie, Chemie, Deutsch, Englisch, Französisch",
   },
   {
     name: "Diana Kanjo",
     role: "Lehrerin",
     bio: "Seit mehreren Jahren unterstütze ich Schülerinnen und Schüler als engagierte Nachhilfelehrerin dabei, Lernlücken zu schließen und wieder Freude am Lernen zu entdecken. Mein Schwerpunkt liegt auf den Fächern Mathematik, Englisch und Deutsch. Dabei lege ich großen Wert darauf, individuell auf die Bedürfnisse meiner Schüler einzugehen und eine angenehme, motivierende Lernatmosphäre zu schaffen. Warum mir das wichtig ist? Weil meine Schüler sich auf die Unterrichtsstunden freuen sollen. Lernen funktioniert am besten, wenn man sich wohlfühlt, sich ernst genommen fühlt und merkt, dass man wirklich Fortschritte macht. Genau das möchte ich in jeder Stunde erreichen!.",
-    image: assetUrl("images/diana-kanjo.jpg"),
+    image: dianaImage,
     subjects: "Mathe, Deutsch",
   },
   {
     name: "Sara Al-nasiri",
     role: "Lehrerin",
     bio: "Ich bin Sarah Al-Naseri, 24 Jahre Nachhilfelehrerin für Deutsch, Mathematik und Englisch Ich studiere derzeit im Masterstudiengang Psychologie und Klinische Psychologie und arbeite seit mehreren Jahren erfolgreich als Nachhilfelehrerin. Mein Schwerpunkt liegt auf Deutsch, Mathematik und Englisch sowie auf Spanisch-Grundkenntnissen und Grammatik. Besonders im Bereich der deutschen Sprache und im Kommunikationstraining bringe ich umfangreiche Erfahrung mit. Ich unterstütze Lernende beim Aufbau sicherer Sprachkompetenz von Grammatik und Wortschatz bis hin zu selbstbewusstem Sprechen. Mehrere Schülerinnen und Schüler habe ich erfolgreich von A1 bis zum B2-Niveau begleitet. Neben meiner Unterrichtstätigkeit spreche ich Deutsch, Arabisch, Englisch, Türkisch sowie Spanisch (Grundkenntnisse), was mir eine mehrsprachige und kultursensible Förderung ermöglicht. Durch mein psychologisches Fachwissen arbeite ich strukturiert, empathisch und individuell angepasst. Mein Ziel ist es, nicht nur schulische Leistungen zu verbessern, sondern auch Motivation, Selbstvertrauen und nachhaltige Lernerfolge zu fördern..",
-    image: assetUrl("images/logobg.png"),
+    image: logoBgImage,
     subjects: "Mathe, Englisch",
   },
   {
     name: "Sofia D.",
     role: "Lehrerin",
     bio: "Ich bin Sofia und seit 2023 Teil des Teams. Ich erkläre komplexe Themen verständlich und lege Wert darauf, dass sich alle Schüler:innen wohlfühlen und ihre individuellen Ziele erreichen. Geduld und eine ruhige Atmosphäre sind mir besonders wichtig.",
-    image: assetUrl("images/logobg.png"),
+    image: logoBgImage,
     subjects: "Mathe, Deutsch",
   },
   {
     name: "André Becker",
     role: "Lehrer",
     bio: "Hallo! Mein Name ist André, ich bin Nachhilfelehrer bei Nachhilfe+. Hauptsächlich für die Fächer Mathematik, Deutsch, Geschichte und Ethik. Neben meiner Arbeit studiere ich Philosophie als auch Geschichte an der Universität in Göttingen. \nIch habe zuletzt in einer Grundschule im Hort gearbeitet, dort Kinder bis zur 4. Klassenstufe betreut, mit den Hausaufgaben geholfen und Vertretungsstunden gegeben. Zudem habe ich mich 5 Jahre in einem Jugendverein sozial engagiert, wobei ich Sportunterricht mit Vorschulkinder machte um diese besser auf den Schulsport vorzubereiten und allgemeine Motorik, sowie Koordination zu verbessern. \nDie Arbeit mit Kindern und Jugendlichen macht mir sehr viel Spaß, am meisten Freude bereitet mir an der Nachhilfe das Gefühl wenn ein/e Schüler/in den Schulstoff versteht und ihre Frustration langsam schwindet. \nSo freue ich mich schon euch kennenzulernen, bis dahin. \nAndré",
-    image: assetUrl("images/andre-becker.jpg"),
+    image: andreImage,
     subjects: "Mathe",
   },
 ];
