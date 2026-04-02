@@ -1,6 +1,5 @@
 import React from "react";
-
-const footerLogo = `${import.meta.env.BASE_URL}images/logo.png`;
+import footerLogo from "../../images/logo.png";
 
 const Footer = ({ onImpressumClick }: { onImpressumClick?: () => void }) => (
   <footer className="bg-surface text-slate-400 py-8 px-4 mt-16 w-full">
