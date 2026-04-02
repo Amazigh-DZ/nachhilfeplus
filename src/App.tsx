@@ -270,6 +270,7 @@ const scrollToSection = (id: string) => {
 
 const BookingTool = () => {
   const [step, setStep] = useState(1);
+  const [submitMessage, setSubmitMessage] = useState('');
   const [data, setData] = useState({ 
     subjects: [] as string[], 
     customSubject: '',
@@ -291,6 +292,20 @@ const BookingTool = () => {
     } else {
       setData({ ...data, subjects: [...data.subjects, subject] });
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSubmitMessage('Deine Anfrage wurde erfolgreich gesendet.');
+    setStep(1);
+    setData({
+      subjects: [],
+      customSubject: '',
+      type: '',
+      name: '',
+      email: '',
+      phone: ''
+    });
   };
 
   return (
@@ -373,7 +388,7 @@ const BookingTool = () => {
             {step === 3 && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <h3 className="text-xl font-black mb-8 uppercase tracking-widest text-primary">3. Daten eingeben</h3>
-                <form onSubmit={(e) => { e.preventDefault(); alert('Anfrage gesendet!'); setStep(1); setData({ subjects: [], customSubject: '', type: '', name: '', email: '', phone: '' }); }} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <input required type="text" placeholder="NAME*" value={data.name} onChange={(e) => setData({...data, name: e.target.value})} className="w-full p-5 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-primary text-white font-bold" />
                   <input required type="email" placeholder="E-MAIL*" value={data.email} onChange={(e) => setData({...data, email: e.target.value})} className="w-full p-5 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-primary text-white font-bold" />
                   <input required type="tel" placeholder="TELEFONNUMMER*" value={data.phone} onChange={(e) => setData({...data, phone: e.target.value})} className="w-full p-5 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-primary text-white font-bold" />
@@ -385,6 +400,12 @@ const BookingTool = () => {
                   </button>
                 </form>
               </motion.div>
+            )}
+
+            {submitMessage && (
+              <div className="mt-6 rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-5 py-4 text-sm font-semibold text-emerald-300">
+                {submitMessage}
+              </div>
             )}
           </div>
         </div>

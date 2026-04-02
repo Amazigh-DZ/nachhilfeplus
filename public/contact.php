@@ -133,9 +133,9 @@ $emailSubject = "Neue Kontaktanfrage: " . $subject;
 // Validiere, dass die $email tatsächlich eine gültige E-Mail ist (nochmal für Sicherheit)
 $replyTo = filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : $recipientEmail;
 
-// Headers erzeugen (sichere Variante ohne newlines in den Werten)
 $headers = [];
-$headers[] = "From: " . addslashes($firstName . " " . $lastName) . " <" . $replyTo . ">";
+// Absender fest auf eigene Domain setzen, Reply-To bleibt die Nutzer-Mail
+$headers[] = "From: Nachhilfe Plus <" . $recipientEmail . ">";
 $headers[] = "Reply-To: " . $replyTo;
 $headers[] = "Return-Path: " . $recipientEmail;
 $headers[] = "Content-Type: text/plain; charset=UTF-8";
@@ -158,16 +158,19 @@ $emailBody .= "IP: " . $_SERVER['REMOTE_ADDR'] . "\n";
 
 // Versuch zu versenden
 $mailSent = false;
+$envelopeFrom = "-f " . $recipientEmail;
 try {
-    if (function_exists('mail')) {
+    if (function_exists("mail")) {
         // Standard PHP mail() verwenden
-        $mailSent = @mail($recipientEmail, $emailSubject, $emailBody, $emailHeaders);
+        $mailSent = @mail($recipientEmail, $emailSubject, $emailBody, $emailHeaders, $envelopeFrom);
     } else {
-        // Falls mail() nicht verfügbar ist
-        throw new Exception('mail() Funktion nicht verfügbar');
+        // Falls mail() nicht verfuegbar ist
+        throw new Exception("mail() Funktion nicht verfuegbar");
     }
 } catch (Exception $e) {
-    error_log('Mail Fehler auf Nachhilfe Plus: ' . $e->getMessage());
+    error_log("Mail Fehler auf Nachhilfe Plus: " . $e->getMessage());
+}
+}
 }
 
 /**
