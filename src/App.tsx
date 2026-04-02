@@ -33,9 +33,9 @@ import Testimonials from './components/Testimonials';
 import Impressum from './components/Impressum';
 import Datenschutz from './components/Datenschutz';
 import CookieConsent from './components/CookieConsent';
-import logoImage from '../images/nachhilfe-plus-logo-quadratisch-removebg-2.png';
 
 // --- Components ---
+const logoImage = `${import.meta.env.BASE_URL}images/nachhilfe-plus-logo-quadratisch-removebg-2.png`;
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
