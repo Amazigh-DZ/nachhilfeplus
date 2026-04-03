@@ -1,2 +1,17 @@
 node_modules/\ndist/\n.vscode/\n.DS_Store\n
 node_modules
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Node modules (falls du Node.js verwendest)
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -33,6 +33,7 @@ import Testimonials from './components/Testimonials';
 import Impressum from './components/Impressum';
 import Datenschutz from './components/Datenschutz';
 import CookieConsent from './components/CookieConsent';
+import { FormSubmitError, submitForm } from './lib/formApi';
 import logoImage from '../images/nachhilfe-plus-logo-quadratisch-removebg-2.png';
 
 // --- Components ---
@@ -271,6 +272,8 @@ const scrollToSection = (id: string) => {
 const BookingTool = () => {
   const [step, setStep] = useState(1);
   const [submitMessage, setSubmitMessage] = useState('');
+  const [submitError, setSubmitError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [data, setData] = useState({ 
     subjects: [] as string[], 
     customSubject: '',
@@ -294,18 +297,47 @@ const BookingTool = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitMessage('Deine Anfrage wurde erfolgreich gesendet.');
-    setStep(1);
-    setData({
-      subjects: [],
-      customSubject: '',
-      type: '',
-      name: '',
-      email: '',
-      phone: ''
-    });
+
+    setSubmitMessage('');
+    setSubmitError('');
+    setIsSubmitting(true);
+
+    const selectedSubjects = [
+      ...data.subjects,
+      ...(data.customSubject.trim() ? [data.customSubject.trim()] : []),
+    ];
+
+    try {
+      await submitForm({
+        formType: 'booking',
+        name: data.name.trim(),
+        email: data.email.trim(),
+        phone: data.phone.trim(),
+        mode: data.type,
+        subjects: selectedSubjects,
+      });
+
+      setSubmitMessage('Deine Anfrage wurde erfolgreich gesendet.');
+      setStep(1);
+      setData({
+        subjects: [],
+        customSubject: '',
+        type: '',
+        name: '',
+        email: '',
+        phone: ''
+      });
+    } catch (error) {
+      setSubmitError(
+        error instanceof FormSubmitError
+          ? error.message
+          : 'Beim Senden ist ein Fehler aufgetreten. Bitte versuche es spaeter erneut.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -392,8 +424,8 @@ const BookingTool = () => {
                   <input required type="text" placeholder="NAME*" value={data.name} onChange={(e) => setData({...data, name: e.target.value})} className="w-full p-5 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-primary text-white font-bold" />
                   <input required type="email" placeholder="E-MAIL*" value={data.email} onChange={(e) => setData({...data, email: e.target.value})} className="w-full p-5 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-primary text-white font-bold" />
                   <input required type="tel" placeholder="TELEFONNUMMER*" value={data.phone} onChange={(e) => setData({...data, phone: e.target.value})} className="w-full p-5 rounded-xl bg-white/5 border border-white/10 outline-none focus:border-primary text-white font-bold" />
-                  <button type="submit" className="w-full bg-white text-black py-5 rounded-xl font-black text-xl shadow-xl hover:bg-primary hover:text-white transition-all uppercase tracking-tighter">
-                    Anfrage Absenden
+                  <button type="submit" disabled={isSubmitting} className="w-full bg-white text-black py-5 rounded-xl font-black text-xl shadow-xl hover:bg-primary hover:text-white transition-all uppercase tracking-tighter disabled:opacity-50 disabled:cursor-not-allowed">
+                    {isSubmitting ? 'Anfrage wird gesendet...' : 'Anfrage Absenden'}
                   </button>
                   <button type="button" onClick={() => setStep(2)} className="w-full text-slate-500 font-bold text-sm uppercase tracking-widest mt-4 hover:text-white transition-colors">
                     Zurück zum Modus
@@ -405,6 +437,12 @@ const BookingTool = () => {
             {submitMessage && (
               <div className="mt-6 rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-5 py-4 text-sm font-semibold text-emerald-300">
                 {submitMessage}
+              </div>
+            )}
+
+            {submitError && (
+              <div className="mt-6 rounded-xl border border-red-400/30 bg-red-500/10 px-5 py-4 text-sm font-semibold text-red-300">
+                {submitError}
               </div>
             )}
           </div>
