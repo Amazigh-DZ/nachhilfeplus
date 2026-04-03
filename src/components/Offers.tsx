@@ -57,7 +57,7 @@ total: "Gesamt: 35 € / 60 Minuten",
       "Kostenlose Probestunde",
       "keine Vertragliche Bindung",
     ],
-    total: "Gesamt: 280€",
+    total: "Gesamt: 560€",
     validity: "Gültig: 4 Monate",
     icon: <HandCoins className="w-6 h-6" />,
     

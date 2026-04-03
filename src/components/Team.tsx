@@ -29,14 +29,14 @@ const team: TeamMember[] = [
   {
     name: "Ari Sadoun",
     role: "Lehrer",
-    bio: "Ich bin Ari Sadoun, 24 Jahre alt und studiere in Göttingen Gymnasiallehramt. Zur Zeit befinde ich mich im 3. Mastersemester. Meine Schwerpunkte sind Deutsch, Werte und Normen, Englisch und Mathe.",
+    bio: " Ich bin Ari Sadoun, 24 Jahre alt und studiere in Göttingen Gymnasiallehramt. Zur Zeit befinde ich mich im 3. Mastersemester. Meine beiden Studienfächer lauten Deutsch, Werte und Normen, ich gebe aber auch Nachhilfe in weiteren Fächern, wie beispielsweise Mathe und Englisch. Ich arbeite schon seit über einem Jahr bei Nachhilfe Plus und genieße die gemeinsame Zeit im Büro mit meinen Kolleg*innen sowie mit meinen Schüler*innen sehr",
     image: ariImage,
     subjects: "Deutsch, Werte und Normen, Englisch, Mathe",
   },
   {
     name: "Dunja Ben Chaladia",
     role: "Lehrerin",
-    bio: "Ich bin Dunja Ben Chaladia und studiere Biologie. Ich unterrichte nicht nur verwandte Fächer wie Chemie und Mathematik, sondern auch Sprachen wie Deutsch, Englisch und Französisch.",
+    bio: "Ich bin Dunja Ben Chaladia und studiere Biologie. Ich unterrichte nicht nur verwandte Fächer wie Chemie und Mathematik, sondern auch Sprachen wie Deutsch, Französisch und Englisch. Schon während meiner Schulzeit habe ich Nachhilfe gegeben und später als Tutorin an der Universität Studierende unterstützt. Es macht mir viel Spaß, mit Kindern und Jugendlichen jeden Alters zu arbeiten, ihre Stärken kennenzulernen und den Unterricht auf sie abzustimmen.",
     image: dunjaImage,
     subjects: "Biologie, Chemie, Deutsch, Englisch, Französisch",
   },
