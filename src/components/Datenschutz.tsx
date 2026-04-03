@@ -1,5 +1,6 @@
 import React from "react";
 import { X } from 'lucide-react';
+import Breadcrumbs from './Breadcrumbs';
 
 interface DatenschutzProps {
   onClose?: () => void;
@@ -24,7 +25,7 @@ const DatenschutzContent = ({ isModal }: { isModal: boolean }) => (
           <p>
             <strong>Nachhilfe Plus</strong><br/>
             Inhaber: <strong>Nassim Ouaissa</strong><br/>
-            <strong>Gormarstr. 3, 37085 Göttingen, Deutschland</strong><br/>
+            <strong>Gotmarstr. 3, 37073 Göttingen, Deutschland</strong><br/>
             E-Mail: <strong>kontakt@nachhilfe-plus.de</strong>
           </p>
         </div>
@@ -62,7 +63,7 @@ const DatenschutzContent = ({ isModal }: { isModal: boolean }) => (
           <p>
             <strong>Nachhilfe Plus</strong><br/>
             Inhaber: <strong>Nassim Ouaissa</strong><br/>
-            <strong>Gormarstr. 3, 37085 Göttingen, Deutschland</strong><br/>
+            <strong>Gotmarstr. 3, 37073 Göttingen, Deutschland</strong><br/>
             E-Mail: <strong>kontakt@nachhilfe-plus.de</strong>
           </p>
         </div>
@@ -241,8 +242,9 @@ const Datenschutz = ({ onClose, isModal = false, onBack }: DatenschutzProps) => 
   return (
     <main className="flex-grow pt-32 pb-20">
       <section className="py-16 px-4 max-w-4xl mx-auto">
+        <Breadcrumbs items={[{ label: 'Start', to: '/' }, { label: 'Datenschutz' }]} />
         <h1 className="text-5xl font-black mb-4 uppercase text-white">Datenschutzerklärung</h1>
-        <p className="text-slate-400 text-sm mb-12">Nachhilfe Plus – Datenschutz auf einen Blick</p>
+        <p className="text-slate-400 text-sm mb-12">Datenschutzhinweise von Nachhilfe Plus fuer Goettingen</p>
         <DatenschutzContent isModal={false} />
       </section>
     </main>

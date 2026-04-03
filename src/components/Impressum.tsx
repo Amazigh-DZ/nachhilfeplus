@@ -1,5 +1,6 @@
 import React from "react";
 import { X } from 'lucide-react';
+import Breadcrumbs from './Breadcrumbs';
 
 interface ImpressumProps {
   onClose?: () => void;
@@ -14,8 +15,8 @@ const ImpressumContent = ({ isModal }: { isModal: boolean }) => (
       <div className="space-y-1 text-xs">
         <p><strong className="text-white">Nachhilfe Plus</strong></p>
         <p>Inhaber: <strong className="text-white">Nassim Ouaissa</strong></p>
-        <p><strong className="text-white">Gormarstr. 3</strong></p>
-        <p><strong className="text-white">37085 Göttingen</strong></p>
+        <p><strong className="text-white">Gotmarstr. 3</strong></p>
+        <p><strong className="text-white">37073 Göttingen</strong></p>
         <p>Deutschland</p>
       </div>
     </div>
@@ -34,7 +35,7 @@ const ImpressumContent = ({ isModal }: { isModal: boolean }) => (
       <h2 className={isModal ? "text-lg font-black mb-2 uppercase text-primary" : "text-2xl font-black mb-3 uppercase text-primary"}>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
       <div className="space-y-1 text-xs">
         <p><strong className="text-white">Nassim Ouaissa</strong></p>
-        <p>Gormarstr. 3, 37085 Göttingen, Deutschland</p>
+        <p>Gotmarstr. 3, 37073 Göttingen, Deutschland</p>
       </div>
     </div>
 
@@ -143,8 +144,9 @@ const Impressum = ({ onClose, isModal = false }: ImpressumProps) => {
   return (
     <main className="flex-grow pt-32 pb-20">
       <section className="py-16 px-4 max-w-4xl mx-auto">
+        <Breadcrumbs items={[{ label: 'Start', to: '/' }, { label: 'Impressum' }]} />
         <h1 className="text-5xl font-black mb-4 uppercase text-white">Impressum</h1>
-        <p className="text-slate-400 text-sm mb-12">Nachhilfe Plus – Rechtliche Informationen</p>
+        <p className="text-slate-400 text-sm mb-12">Rechtliche Informationen von Nachhilfe Plus in Göttingen</p>
         <ImpressumContent isModal={false} />
       </section>
     </main>

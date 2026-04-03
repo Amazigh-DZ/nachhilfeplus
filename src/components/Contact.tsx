@@ -107,9 +107,9 @@ const Contact = () => {
   const socialLinks = [
     { icon: Instagram, href: "https://instagram.com/deinprofil", label: "Instagram" },
     { icon: Facebook, href: "https://facebook.com/deinprofil", label: "Facebook" },
-    { icon: FaWhatsapp, href: "https://wa.me/49157546454", label: "WhatsApp" },
+    { icon: FaWhatsapp, href: "https://wa.me/4915757423911", label: "WhatsApp" },
     { icon: FaTelegramPlane, href: "https://t.me/NachhilfePlus", label: "Telegram" },
-    { icon: SiSignal, href: "https://signal.me/#p/49157546454", label: "Signal" },
+    { icon: SiSignal, href: "https://signal.me/#p/+4915757423911", label: "Signal" },
   ];
 
   return (
@@ -156,7 +156,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <div className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Standort</div>
-                    <div className="text-xl font-bold text-white">Gotmarstrasse 3, 37073 Goettingen</div>
+                    <div className="text-xl font-bold text-white">Gotmarstr. 3, 37073 Goettingen</div>
                   </div>
                 </div>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   BookOpen, 
   Users,
@@ -33,6 +33,7 @@ import Testimonials from './components/Testimonials';
 import Impressum from './components/Impressum';
 import Datenschutz from './components/Datenschutz';
 import CookieConsent from './components/CookieConsent';
+import Seo from './components/Seo';
 import { FormSubmitError, submitForm } from './lib/formApi';
 import logoImage from '../images/nachhilfe-plus-logo-quadratisch-removebg-2.png';
 
@@ -43,6 +44,7 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -72,7 +74,7 @@ const Navbar = () => {
 
     const observer = new IntersectionObserver(observerCallback, observerOptions);
     
-    const sections = ['home', 'about', 'offers', 'team', 'jobs', 'faq', 'contact'];
+    const sections = ['home', 'about', 'offers', 'team', 'faq', 'contact'];
     sections.forEach((id) => {
       const element = document.getElementById(id);
       if (element) observer.observe(element);
@@ -86,7 +88,6 @@ const Navbar = () => {
     { id: 'about', label: 'Über uns' },
     { id: 'offers', label: 'Preise' },
     { id: 'team', label: 'Team' },
-    { id: 'jobs', label: 'Jobs' },
     { id: 'faq', label: 'FAQ' },
     { id: 'contact', label: 'Kontakt' },
   ];
@@ -110,6 +111,16 @@ const Navbar = () => {
 
   const isHomePage = location.pathname === '/';
 
+  const handleSectionNavigation = (id: string) => {
+    if (isHomePage) {
+      scrollToSection(id);
+      return;
+    }
+
+    navigate({ pathname: '/', hash: `#${id}` });
+    setIsOpen(false);
+  };
+
   return (
     <nav className={`fixed top-0 left-0 right-0 z-30 px-4 py-6 transition-all duration-300 ${scrolled ? 'py-4' : 'py-6'}`}>
       <div className={`max-w-7xl mx-auto glass rounded-2xl px-6 py-4 flex justify-between items-center transition-all ${scrolled ? 'shadow-2xl border-white/20' : ''}`}>
@@ -126,7 +137,7 @@ const Navbar = () => {
           {menuItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => isHomePage && scrollToSection(item.id)}
+              onClick={() => handleSectionNavigation(item.id)}
               className={`text-sm font-bold transition-all uppercase tracking-widest relative group ${
                 isHomePage && activeSection === item.id 
                   ? 'text-white drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]' 
@@ -146,7 +157,7 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:block">
-          <button onClick={() => isHomePage && scrollToSection('booking')} className="bg-white text-black px-6 py-2.5 rounded-xl font-black text-sm hover:bg-primary hover:text-white transition-all glow uppercase tracking-tight">
+          <button onClick={() => handleSectionNavigation('booking')} className="bg-white text-black px-6 py-2.5 rounded-xl font-black text-sm hover:bg-primary hover:text-white transition-all glow uppercase tracking-tight">
             JETZT STARTEN
           </button>
         </div>
@@ -170,10 +181,7 @@ const Navbar = () => {
               {menuItems.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => {
-                    if (isHomePage) scrollToSection(item.id);
-                    setIsOpen(false);
-                  }}
+                  onClick={() => handleSectionNavigation(item.id)}
                   className={`block w-full text-left px-4 py-3 text-base font-bold uppercase tracking-widest transition-all ${
                     isHomePage && activeSection === item.id ? 'text-primary' : 'text-slate-300 hover:text-white'
                   }`}
@@ -182,7 +190,7 @@ const Navbar = () => {
                 </button>
               ))}
               <button 
-                onClick={() => isHomePage && scrollToSection('booking')}
+                onClick={() => handleSectionNavigation('booking')}
                 className="block w-full text-center mt-4 bg-primary text-white py-4 rounded-xl font-black uppercase tracking-tight"
               >
                 JETZT STARTEN
@@ -635,6 +643,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-white selection:bg-primary selection:text-white overflow-x-hidden">
+      <Seo />
       <Navbar />
       
       <Routes>
@@ -655,30 +664,10 @@ export default function App() {
           </div>
           <div className="flex flex-wrap justify-center gap-8 mb-10 text-xs font-black uppercase tracking-widest text-slate-500">
             <Link to="/" className="hover:text-white transition-colors">Start</Link>
-            <Link to="/" onClick={() => {
-              setTimeout(() => {
-                const element = document.getElementById('about');
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth' });
-                }
-              }, 100);
-            }} className="hover:text-white transition-colors">Über uns</Link>
-            <Link to="/" onClick={() => {
-              setTimeout(() => {
-                const element = document.getElementById('offers');
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth' });
-                }
-              }, 100);
-            }} className="hover:text-white transition-colors">Angebot</Link>
-            <Link to="/" onClick={() => {
-              setTimeout(() => {
-                const element = document.getElementById('contact');
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth' });
-                }
-              }, 100);
-            }} className="hover:text-white transition-colors">Kontakt</Link>
+            <Link to="/#about" className="hover:text-white transition-colors">Über uns</Link>
+            <Link to="/#offers" className="hover:text-white transition-colors">Preise</Link>
+            <Link to="/#faq" className="hover:text-white transition-colors">FAQ</Link>
+            <Link to="/#contact" className="hover:text-white transition-colors">Kontakt</Link>
             <button onClick={() => setShowImpressum(true)} className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors bg-transparent border-none cursor-pointer p-0 m-0">Impressum</button>
             <button onClick={() => setShowDatenschutz(true)} className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors bg-transparent border-none cursor-pointer p-0 m-0">Datenschutz</button>
           </div>
@@ -688,10 +677,9 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Modals */}
       {showImpressum && <Impressum isModal={true} onClose={() => setShowImpressum(false)} />}
       {showDatenschutz && <Datenschutz isModal={true} onClose={() => setShowDatenschutz(false)} />}
-      
+
       {/* Cookie Consent */}
       <CookieConsent />
     </div>
