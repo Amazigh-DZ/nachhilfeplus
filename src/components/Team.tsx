@@ -22,7 +22,7 @@ const team: TeamMember[] = [
   {
     name: "Nassim Ouaissa",
     role: "Gründer & Leitung",
-    bio: "Ich bin Nassim Ouaissa, Gründer von Nachhilfe Plus. Ich habe Mathematik und Physik studiert und unterrichte seit über 10 Jahren mit Leidenschaft. Mein Ziel ist es, Schüler:innen nicht nur Wissen, sondern auch Selbstvertrauen und Freude am Lernen zu vermitteln. Moderne Lernmethoden, Geduld und individuelle Förderung stehen für mich im Mittelpunkt.",
+    bio: "Ich bin Nassim Ouaissa, Gründer von Nachhilfe Plus. Seit vielen Jahren begleite ich Schülerinnen, Schüler und Erwachsene mit fachlicher Kompetenz, Geduld und echter Begeisterung für Lernen und Lehren. Meine Schwerpunkte liegen in Mathematik, Physik, Wirtschaft, Informatik sowie EDV. Als zertifizierter Nachhilfelehrer im Rahmen des Bildungs- und Teilhabepakets (BuT) im Landkreis Göttingen bin ich bereits seit 2012 tätig. Seit 2014 unterstütze ich außerdem minderjährige Flüchtlinge bei der Jugendhilfe Südniedersachsen e.V. in unterschiedlichen Fächern. Ergänzend dazu war und bin ich in Bildungs- und Integrationsprojekten aktiv und bereite Lernende gezielt auf Schulabschlüsse im Sekundarbereich I sowie auf das Abitur vor. Im Mittelpunkt meiner Arbeit steht immer der Mensch: Ich möchte Lernende individuell fördern, fachlich stärken und ihnen Schritt für Schritt mehr Sicherheit auf ihrem Bildungsweg geben. Nachhilfe Plus steht deshalb für qualifizierten, persönlichen und nachhaltigen Unterricht.",
     image: nassimImage,
     subjects: "Mathe, Physik, Französisch, Informatik",
   },

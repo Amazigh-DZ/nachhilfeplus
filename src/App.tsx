@@ -679,8 +679,8 @@ export default function App() {
                 }
               }, 100);
             }} className="hover:text-white transition-colors">Kontakt</Link>
-            <button onClick={() => setShowImpressum(true)} className="hover:text-white transition-colors bg-transparent border-none cursor-pointer p-0 m-0">Impressum</button>
-            <button onClick={() => setShowDatenschutz(true)} className="hover:text-white transition-colors bg-transparent border-none cursor-pointer p-0 m-0">Datenschutz</button>
+            <button onClick={() => setShowImpressum(true)} className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors bg-transparent border-none cursor-pointer p-0 m-0">Impressum</button>
+            <button onClick={() => setShowDatenschutz(true)} className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors bg-transparent border-none cursor-pointer p-0 m-0">Datenschutz</button>
           </div>
           <div className="text-xs font-bold text-slate-600 tracking-[0.3em] uppercase"> 
             &copy; 2019 Nachhilfe Plus &bull; Dein Weg zum Erfolg
