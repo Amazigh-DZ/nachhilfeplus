@@ -6,6 +6,22 @@
 - Das SMTP-Passwort liegt nicht mehr im Repository.
 - Fuer lokale Entwicklung kann `contact.php` eine `.php.env` Datei laden.
 - Vite leitet `POST /contact.php` in der lokalen Entwicklung automatisch an `http://localhost:8000/contact.php` weiter.
+- Das Frontend kann alternativ ueber `VITE_FORM_ENDPOINT` an einen separaten PHP-Webspace-Endpunkt senden.
+
+## Empfohlene Live-Architektur fuer IONOS
+
+Wenn Deploy Now dein Frontend nur statisch ausliefert, nutze zwei Ziele:
+
+- Website: `https://nachhilfe-plus.de`
+- PHP-Mailer auf Webspace: `https://mail.nachhilfe-plus.de/contact.php`
+
+Dann setzt du fuer den Frontend-Build:
+
+```env
+VITE_FORM_ENDPOINT=https://mail.nachhilfe-plus.de/contact.php
+```
+
+So spricht das React-Frontend nicht mehr `/contact.php` auf dem statischen Deploy an, sondern direkt den echten PHP-Endpunkt auf dem IONOS-Webspace.
 
 ## 1. IONOS-Produktionssetup
 
@@ -39,6 +55,12 @@ IONOS_EMAIL_RECIPIENT=kontakt@nachhilfe-plus.de
 ```
 
 Die Datei `.php.env` ist in `.gitignore` ausgeschlossen und wird nicht mit committed.
+
+Wenn du lokal eine andere Formular-URL erzwingen willst, kannst du zusaetzlich eine `.env.local` anlegen:
+
+```env
+VITE_FORM_ENDPOINT=http://localhost:8000/contact.php
+```
 
 ## 3. Lokal testen
 

@@ -5,8 +5,12 @@ export class FormSubmitError extends Error {
   }
 }
 
+const FORM_ENDPOINT = (
+  import.meta.env.VITE_FORM_ENDPOINT?.trim() || '/contact.php'
+);
+
 export async function submitForm(payload: Record<string, unknown>) {
-  const response = await fetch('/contact.php', {
+  const response = await fetch(FORM_ENDPOINT, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -14,12 +18,15 @@ export async function submitForm(payload: Record<string, unknown>) {
     body: JSON.stringify(payload),
   });
 
+  const rawBody = await response.text();
   let data: { success?: boolean; message?: string } | null = null;
 
   try {
-    data = await response.json();
+    data = rawBody ? JSON.parse(rawBody) : null;
   } catch {
-    throw new FormSubmitError('Der Server hat keine gueltige Antwort geliefert.');
+    throw new FormSubmitError(
+      `Der Server hat keine gueltige Antwort geliefert (HTTP ${response.status}).`
+    );
   }
 
   if (!response.ok || !data?.success) {
