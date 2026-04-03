@@ -4,6 +4,7 @@ node_modules
 .env
 .env.local
 .env.*.local
+.php.env
 
 # Node modules (falls du Node.js verwendest)
 node_modules/
