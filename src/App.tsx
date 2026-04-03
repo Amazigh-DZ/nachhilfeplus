@@ -87,7 +87,7 @@ const Navbar = () => {
     { id: 'offers', label: 'Preise' },
     { id: 'team', label: 'Team' },
     { id: 'jobs', label: 'Jobs' },
-    { id: 'faq', label: 'HÃ¤ufige Fragen' },
+    { id: 'faq', label: 'FAQ' },
     { id: 'contact', label: 'Kontakt' },
   ];
 
