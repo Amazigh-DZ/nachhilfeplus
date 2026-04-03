@@ -72,7 +72,7 @@ const Navbar = () => {
 
     const observer = new IntersectionObserver(observerCallback, observerOptions);
     
-    const sections = ['home', 'about', 'offers', 'team', 'jobs', 'contact'];
+    const sections = ['home', 'about', 'offers', 'team', 'jobs', 'faq', 'contact'];
     sections.forEach((id) => {
       const element = document.getElementById(id);
       if (element) observer.observe(element);
@@ -87,6 +87,7 @@ const Navbar = () => {
     { id: 'offers', label: 'Preise' },
     { id: 'team', label: 'Team' },
     { id: 'jobs', label: 'Jobs' },
+    { id: 'faq', label: 'HÃ¤ufige Fragen' },
     { id: 'contact', label: 'Kontakt' },
   ];
 
@@ -205,7 +206,7 @@ const FAQ = () => {
      ];
 
      return (
-    <section className="py-16">
+    <section id="faq" className="py-16">
       <div className="max-w-3xl mx-auto px-4">
         <h2 className="text-4xl font-black text-center mb-12 tracking-tighter uppercase">Häufige <span className="gradient-text">Fragen</span></h2>
         <div className="space-y-4">
