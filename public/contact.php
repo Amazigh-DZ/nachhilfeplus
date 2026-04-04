@@ -257,7 +257,7 @@ $smtpPort = (int) get_config_value('IONOS_EMAIL_PORT', '465');
 $smtpUser = get_config_value('IONOS_EMAIL_USERNAME', 'kontakt@nachhilfe-plus.de');
 $smtpPass = get_config_value('IONOS_EMAIL_PASSWORD', '');
 $smtpDefaultRecipient = get_config_value('IONOS_EMAIL_RECIPIENT', $smtpUser);
-$smtpApplicationRecipient = get_config_value('IONOS_EMAIL_APPLICATION_RECIPIENT', 'bewerbung@nachhilfe-plus.de');
+$smtpApplicationRecipient = 'bewerbung@nachhilfe-plus.de';
 $smtpRecipient = $smtpDefaultRecipient;
 $smtpSecurity = strtolower((string) get_config_value('IONOS_EMAIL_SECURITY', ''));
 
