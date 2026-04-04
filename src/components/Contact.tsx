@@ -1,4 +1,4 @@
-import { Phone, Mail, MapPin, Clock, Send, Instagram, Facebook, AlertCircle, CheckCircle } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, Instagram, Facebook, AlertCircle, CheckCircle, Navigation } from 'lucide-react';
 import { FaWhatsapp, FaTelegramPlane } from "react-icons/fa";
 import { SiSignal } from "react-icons/si";
 import { useState } from 'react';
@@ -18,6 +18,12 @@ const Contact = () => {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const locationName = 'Nachhilfe Plus';
+  const locationAddress = 'Gotmarstr. 3, 37073 Goettingen';
+  const locationQuery = encodeURIComponent(`${locationName}, ${locationAddress}`);
+  const mapEmbedUrl = `https://www.google.com/maps?q=${locationQuery}&z=16&output=embed`;
+  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${locationQuery}`;
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${locationQuery}`;
 
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -156,7 +162,14 @@ const Contact = () => {
                   </div>
                   <div>
                     <div className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Standort</div>
-                    <div className="text-xl font-bold text-white">Gotmarstr. 3, 37073 Goettingen</div>
+                    <a
+                      href={mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xl font-bold text-white transition-colors hover:text-primary"
+                    >
+                      {locationAddress}
+                    </a>
                   </div>
                 </div>
 
@@ -196,16 +209,38 @@ const Contact = () => {
 
             <div className="glass rounded-[2.5rem] overflow-hidden relative border border-white/5">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2534.087!2d9.9336!3d51.5350!2m3!1f0!2f0!3f0!2f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a34a27c7c7c7c7%3A0x1234567890!2sGotmarstr%203%2037073%20G%C3%B6ttingen!5e0!3m2!1sde!2sde!4v1700000000000"
+                src={mapEmbedUrl}
+                title="Nachhilfe Plus auf Google Maps"
                 width="100%"
-                height="220"
+                height="260"
                 style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               ></iframe>
-              <div className="absolute top-4 left-4 bg-primary text-white px-4 py-2 rounded-lg font-bold text-sm z-10">
-                Nachhilfe Plus
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute top-4 left-4 z-10 max-w-[16rem] rounded-2xl border border-white/10 bg-slate-950/85 px-3.5 py-2.5 backdrop-blur-md transition-colors hover:border-primary/60"
+              >
+                <div className="mb-1 inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+                  <MapPin className="h-3.5 w-3.5" />
+                  <span>Standort</span>
+                </div>
+                <div className="text-base font-black text-white uppercase tracking-tight">{locationName}</div>
+                <div className="text-xs font-bold text-slate-300">{locationAddress}</div>
+              </a>
+              <div className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2">
+                <a
+                  href={directionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950/85 border border-white/10 px-4 py-2.5 text-xs font-black uppercase tracking-tight text-white shadow-xl backdrop-blur-md transition-all hover:bg-primary hover:border-primary hover:text-white"
+                >
+                  <Navigation className="w-4 h-4" />
+                  Wegbeschreibung
+                </a>
               </div>
             </div>
           </div>

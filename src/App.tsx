@@ -74,7 +74,7 @@ const Navbar = () => {
 
     const observer = new IntersectionObserver(observerCallback, observerOptions);
     
-    const sections = ['home', 'about', 'offers', 'team', 'faq', 'contact'];
+    const sections = ['home', 'about', 'offers', 'team', 'jobs', 'faq', 'contact'];
     sections.forEach((id) => {
       const element = document.getElementById(id);
       if (element) observer.observe(element);
@@ -88,6 +88,7 @@ const Navbar = () => {
     { id: 'about', label: 'Über uns' },
     { id: 'offers', label: 'Preise' },
     { id: 'team', label: 'Team' },
+    { id: 'jobs', label: 'Jobs' },
     { id: 'faq', label: 'FAQ' },
     { id: 'contact', label: 'Kontakt' },
   ];
@@ -209,8 +210,8 @@ const FAQ = () => {
     { q: "Wie schnell kann die Nachhilfe starten?", a: "In der Regel können wir innerhalb von 48 Stunden nach dem Erstgespräch eine passende Lehrkraft für Sie finden." },
     { q: "Gibt es eine Mindestvertragslaufzeit?", a: "Nein, bei Nachhilfe Plus setzen wir auf Flexibilität. Sie können monatlich kündigen oder Stundenpakete ohne Abo-Zwang buchen." },
     { q: "Sind die Lehrkräfte qualifiziert?", a: "Absolut. Wir arbeiten ausschließlich mit Lehramtsstudierenden, Fachakademikern oder erfahrenen Pädagogen zusammen." },
-    { q: "Warum emphehlt Nachhilfe Plus Einzelunterricht", a: " Individuelle Nachhilfe hilft, weil sie sich gezielt an den Stärken und Schwächen des Schülers orientiert. Dadurch können Wissenslücken effizienter geschlossen und das Verständnis nachhaltiger aufgebaut werden." },
-    { q: "Bietet Nachhilfe Plus Keine Gruppen Unterricht?", a: " Unser Gruppenunterricht findet ausschließlich mit Schülern aus derselben Klassenstufe statt, die sich bereits kennen. So entsteht eine vertraute Lernatmosphäre, in der gemeinsam gearbeitet, erklärt und voneinander gelernt werden kann. Dieses Konzept ist sinnvoll, weil Schüler sich in einer vertrauten Gruppe wohler fühlen und offener Fragen stellen. Wenn sie sich bereits kennen, sinkt die Hemmschwelle, Fehler zu machen oder etwas nicht zu verstehen. Gleichzeitig können sie gezielt gemeinsam an denselben Themen arbeiten, sich gegenseitig unterstützen und voneinander profitieren was den Lernerfolg nachhaltig verbessert." }
+    { q: "Warum empfiehlt Nachhilfe Plus Einzelunterricht?", a: "Individuelle Nachhilfe hilft, weil sie sich gezielt an den Stärken und Schwächen des Schülers orientiert. Dadurch können Wissenslücken effizienter geschlossen und das Verständnis nachhaltiger aufgebaut werden." },
+    { q: "Bietet Nachhilfe Plus keinen Gruppenunterricht?", a: "Unser Gruppenunterricht findet ausschließlich mit Schülern aus derselben Klassenstufe statt, die sich bereits kennen. So entsteht eine vertraute Lernatmosphäre, in der gemeinsam gearbeitet, erklärt und voneinander gelernt werden kann. Dieses Konzept ist sinnvoll, weil Schüler sich in einer vertrauten Gruppe wohler fühlen und offener Fragen stellen. Wenn sie sich bereits kennen, sinkt die Hemmschwelle, Fehler zu machen oder etwas nicht zu verstehen. Gleichzeitig können sie gezielt gemeinsam an denselben Themen arbeiten, sich gegenseitig unterstützen und voneinander profitieren, was den Lernerfolg nachhaltig verbessert." }
      ];
 
      return (
@@ -253,7 +254,7 @@ const FAQ = () => {
     Hast du noch Fragen?
   </span>
   <span className="hidden group-hover:inline">
-    dann Schreib uns
+    Dann schreib uns
   </span>
 </button>
 </a>
@@ -514,7 +515,7 @@ const About = () => {
                   </div>
                   <div>
                     <h4 className="font-black uppercase tracking-tight text-white">{item.title}</h4>
-                    <p className="text-slate-500 text-sm font-medium">{item.desc}</p>
+                    <div className="text-slate-500 text-sm font-medium">{item.desc}</div>
                   </div>
                 </div>
               ))}
@@ -529,7 +530,7 @@ const About = () => {
           >
             <div className="glass p-4 rounded-[3rem] rotate-3 hover:rotate-0 transition-transform duration-500">
               <img 
-                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800" 
+                src="/images/NachhilfePlusZentrum.png" 
                 alt="Team working" 
                 className="rounded-[2.5rem] w-full h-auto shadow-2xl"
               />
@@ -666,6 +667,7 @@ export default function App() {
             <Link to="/" className="hover:text-white transition-colors">Start</Link>
             <Link to="/#about" className="hover:text-white transition-colors">Über uns</Link>
             <Link to="/#offers" className="hover:text-white transition-colors">Preise</Link>
+            <Link to="/#jobs" className="hover:text-white transition-colors">Jobs</Link>
             <Link to="/#faq" className="hover:text-white transition-colors">FAQ</Link>
             <Link to="/#contact" className="hover:text-white transition-colors">Kontakt</Link>
             <button onClick={() => setShowImpressum(true)} className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors bg-transparent border-none cursor-pointer p-0 m-0">Impressum</button>

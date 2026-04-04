@@ -1,4 +1,26 @@
 <?php
+$allowedOrigins = [
+    'https://nachhilfe-plus.de',
+    'https://www.nachhilfe-plus.de',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+];
+
+$requestOrigin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+if ($requestOrigin !== '' && in_array($requestOrigin, $allowedOrigins, true)) {
+    header("Access-Control-Allow-Origin: {$requestOrigin}");
+    header('Vary: Origin');
+    header('Access-Control-Allow-Methods: POST, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type');
+    header('Access-Control-Max-Age: 86400');
+}
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
+
 header('Content-Type: application/json; charset=utf-8');
 
 function respond($ok, $msg, $code = 200) {
@@ -234,7 +256,9 @@ $smtpHost = get_config_value('IONOS_EMAIL_HOST', 'smtp.ionos.de');
 $smtpPort = (int) get_config_value('IONOS_EMAIL_PORT', '465');
 $smtpUser = get_config_value('IONOS_EMAIL_USERNAME', 'kontakt@nachhilfe-plus.de');
 $smtpPass = get_config_value('IONOS_EMAIL_PASSWORD', '');
-$smtpRecipient = get_config_value('IONOS_EMAIL_RECIPIENT', $smtpUser);
+$smtpDefaultRecipient = get_config_value('IONOS_EMAIL_RECIPIENT', $smtpUser);
+$smtpApplicationRecipient = get_config_value('IONOS_EMAIL_APPLICATION_RECIPIENT', 'bewerbung@nachhilfe-plus.de');
+$smtpRecipient = $smtpDefaultRecipient;
 $smtpSecurity = strtolower((string) get_config_value('IONOS_EMAIL_SECURITY', ''));
 
 if ($smtpPass === '') {
@@ -348,6 +372,7 @@ if ($formType === 'contact') {
         respond(false, 'Bitte trage mindestens ein gueltiges Fach ein', 400);
     }
 
+    $smtpRecipient = $smtpApplicationRecipient !== '' ? $smtpApplicationRecipient : $smtpDefaultRecipient;
     $subjectLine = 'Neue Bewerbung: ' . $jobTitle;
     $body  = "Neue Bewerbung von der Website\n\n";
     $body .= "Position: {$jobTitle}\n";

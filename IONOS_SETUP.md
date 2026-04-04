@@ -2,7 +2,8 @@
 
 ## Was jetzt im Projekt umgesetzt ist
 
-- `public/contact.php` sendet alle Formulare per SMTP ueber IONOS.
+- `public/contact.php` sendet Kontakt- und Terminformulare per SMTP ueber IONOS.
+- Bewerbungen koennen an eine separate Adresse gehen.
 - Das SMTP-Passwort liegt nicht mehr im Repository.
 - Fuer lokale Entwicklung kann `contact.php` eine `.php.env` Datei laden.
 - Vite leitet `POST /contact.php` in der lokalen Entwicklung automatisch an `http://localhost:8000/contact.php` weiter.
@@ -33,6 +34,7 @@ Lege in IONOS oder in deiner PHP-Umgebung diese Werte an:
 - `IONOS_EMAIL_USERNAME=kontakt@nachhilfe-plus.de`
 - `IONOS_EMAIL_PASSWORD=DEIN_IONOS_EMAIL_PASSWORT`
 - `IONOS_EMAIL_RECIPIENT=kontakt@nachhilfe-plus.de`
+- `IONOS_EMAIL_APPLICATION_RECIPIENT=bewerbung@nachhilfe-plus.de`
 
 Wenn dein IONOS-Setup stattdessen `587` nutzt, setze:
 
@@ -52,6 +54,7 @@ IONOS_EMAIL_SECURITY=ssl
 IONOS_EMAIL_USERNAME=kontakt@nachhilfe-plus.de
 IONOS_EMAIL_PASSWORD=DEIN_IONOS_EMAIL_PASSWORT
 IONOS_EMAIL_RECIPIENT=kontakt@nachhilfe-plus.de
+IONOS_EMAIL_APPLICATION_RECIPIENT=bewerbung@nachhilfe-plus.de
 ```
 
 Die Datei `.php.env` ist in `.gitignore` ausgeschlossen und wird nicht mit committed.
