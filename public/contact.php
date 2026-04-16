@@ -224,6 +224,48 @@ function smtp_send($host, $port, $user, $pass, $from, $to, $data, $security) {
     return true;
 }
 
+/**
+ * Sendet Formulardaten zusätzlich an die Verwaltungs-App.
+ * Scheitert diese Funktion, hat das KEINEN Einfluss auf den E-Mail-Versand.
+ */
+function send_to_verwaltung($apiUrl, $apiSecret, $payload) {
+    if (empty($apiUrl) || empty($apiSecret)) {
+        return;
+    }
+
+    if (!function_exists('curl_init')) {
+        error_log('[Verwaltung] cURL nicht verfügbar');
+        return;
+    }
+
+    $json = json_encode($payload, JSON_UNESCAPED_UNICODE);
+    $ch   = curl_init($apiUrl);
+
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => $json,
+        CURLOPT_TIMEOUT        => 5,
+        CURLOPT_HTTPHEADER     => [
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($json),
+            'x-public-form-secret: ' . $apiSecret,
+        ],
+        CURLOPT_SSL_VERIFYPEER => true,
+    ]);
+
+    curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $error    = curl_error($ch);
+    curl_close($ch);
+
+    if ($error) {
+        error_log('[Verwaltung] cURL-Fehler: ' . $error);
+    } elseif ($httpCode < 200 || $httpCode >= 300) {
+        error_log('[Verwaltung] HTTP ' . $httpCode . ' beim Import');
+    }
+}
+
 load_php_env_file(__DIR__ . '/.php.env');
 load_php_env_file(dirname(__DIR__) . '/.php.env');
 
@@ -269,14 +311,15 @@ if ($smtpSecurity === '') {
     $smtpSecurity = $smtpPort === 587 ? 'tls' : 'ssl';
 }
 
-$subjectLine = '';
-$body = '';
+$subjectLine        = '';
+$body               = '';
+$verwaltungPayload  = [];
 
 if ($formType === 'contact') {
     $firstName = trim((string) ($data['firstName'] ?? ''));
-    $lastName = trim((string) ($data['lastName'] ?? ''));
-    $subject = trim((string) ($data['subject'] ?? ''));
-    $message = trim((string) ($data['message'] ?? ''));
+    $lastName  = trim((string) ($data['lastName']  ?? ''));
+    $subject   = trim((string) ($data['subject']   ?? ''));
+    $message   = trim((string) ($data['message']   ?? ''));
 
     if (strlen($firstName) < 2) {
         respond(false, 'Vorname ist zu kurz', 400);
@@ -301,9 +344,19 @@ if ($formType === 'contact') {
     $body .= "Telefon: {$phone}\n";
     $body .= "Betreff: {$subject}\n\n";
     $body .= "Nachricht:\n{$message}\n";
+
+    $verwaltungPayload = [
+        'formType'   => 'contact',
+        'first_name' => $firstName,
+        'last_name'  => $lastName,
+        'email'      => $email,
+        'phone'      => $phone,
+        'subject'    => $subject,
+        'message'    => $message,
+    ];
 } elseif ($formType === 'booking') {
-    $name = trim((string) ($data['name'] ?? ''));
-    $mode = trim((string) ($data['mode'] ?? ''));
+    $name     = trim((string) ($data['name'] ?? ''));
+    $mode     = trim((string) ($data['mode'] ?? ''));
     $subjects = $data['subjects'] ?? [];
 
     if (strlen($name) < 2) {
@@ -333,12 +386,23 @@ if ($formType === 'contact') {
     $body .= "Telefon: {$phone}\n";
     $body .= "Modus: {$mode}\n";
     $body .= 'Faecher: ' . implode(', ', $cleanSubjects) . "\n";
+
+    $nameParts = explode(' ', $name, 2);
+    $verwaltungPayload = [
+        'formType'   => 'booking',
+        'first_name' => $nameParts[0],
+        'last_name'  => $nameParts[1] ?? '',
+        'email'      => $email,
+        'phone'      => $phone,
+        'subjects'   => $cleanSubjects,
+        'message'    => "Unterrichtsart: {$mode}",
+    ];
 } elseif ($formType === 'application') {
-    $fullName = trim((string) ($data['fullName'] ?? ''));
-    $status = trim((string) ($data['status'] ?? ''));
-    $jobTitle = trim((string) ($data['jobTitle'] ?? 'Initiativbewerbung'));
+    $fullName     = trim((string) ($data['fullName']     ?? ''));
+    $status       = trim((string) ($data['status']       ?? ''));
+    $jobTitle     = trim((string) ($data['jobTitle']     ?? 'Initiativbewerbung'));
     $availability = trim((string) ($data['availability'] ?? ''));
-    $subjects = $data['subjects'] ?? [];
+    $subjects     = $data['subjects'] ?? [];
 
     if (strlen($fullName) < 2) {
         respond(false, 'Name ist zu kurz', 400);
@@ -358,8 +422,8 @@ if ($formType === 'contact') {
             continue;
         }
 
-        $subjectName = trim((string) ($entry['name'] ?? ''));
-        $grade = trim((string) ($entry['grade'] ?? ''));
+        $subjectName = trim((string) ($entry['name']  ?? ''));
+        $grade       = trim((string) ($entry['grade'] ?? ''));
 
         if ($subjectName === '' || $grade === '') {
             continue;
@@ -373,7 +437,7 @@ if ($formType === 'contact') {
     }
 
     $smtpRecipient = $smtpApplicationRecipient !== '' ? $smtpApplicationRecipient : $smtpDefaultRecipient;
-    $subjectLine = 'Neue Bewerbung: ' . $jobTitle;
+    $subjectLine   = 'Neue Bewerbung: ' . $jobTitle;
     $body  = "Neue Bewerbung von der Website\n\n";
     $body .= "Position: {$jobTitle}\n";
     $body .= "Name: {$fullName}\n";
@@ -385,6 +449,26 @@ if ($formType === 'contact') {
     if ($availability !== '') {
         $body .= "\nVerfuegbarkeit:\n{$availability}\n";
     }
+
+    $nameParts     = explode(' ', $fullName, 2);
+    $subjectNames  = array_values(array_filter(array_map(
+        fn($s) => trim((string) ($s['name'] ?? '')),
+        array_filter($subjects, fn($s) => is_array($s))
+    )));
+
+    $verwaltungPayload = [
+        'formType'           => 'application',
+        'first_name'         => $nameParts[0],
+        'last_name'          => $nameParts[1] ?? '',
+        'email'              => $email,
+        'phone'              => $phone,
+        'subject'            => $jobTitle,
+        'job_title'          => $jobTitle,
+        'message'            => $availability,
+        'availability'       => $availability,
+        'subjects'           => $subjectNames,
+        'application_status' => $status,
+    ];
 } else {
     respond(false, 'Unbekannter Formulartyp', 400);
 }
@@ -403,7 +487,7 @@ $headers = [
 ];
 
 $smtpData = implode("\r\n", array_merge($headers, ['', $body]));
-$result = smtp_send(
+$result   = smtp_send(
     $smtpHost,
     $smtpPort,
     $smtpUser,
@@ -415,6 +499,12 @@ $result = smtp_send(
 );
 
 if ($result === true) {
+    // E-Mail wurde erfolgreich gesendet.
+    // Zusätzlich: Datensatz in Verwaltungs-App speichern (fire-and-forget).
+    $verwaltungApiUrl    = get_config_value('VERWALTUNG_API_URL', '');
+    $verwaltungApiSecret = get_config_value('VERWALTUNG_API_SECRET', '');
+    send_to_verwaltung($verwaltungApiUrl, $verwaltungApiSecret, $verwaltungPayload);
+
     respond(true, 'Vielen Dank! Deine Nachricht wurde gesendet.');
 }
 
