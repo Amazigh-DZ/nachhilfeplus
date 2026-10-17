@@ -1,4 +1,26 @@
 <?php
+$allowedOrigins = [
+    'https://nachhilfe-plus.de',
+    'https://www.nachhilfe-plus.de',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+];
+
+$requestOrigin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+if ($requestOrigin !== '' && in_array($requestOrigin, $allowedOrigins, true)) {
+    header("Access-Control-Allow-Origin: {$requestOrigin}");
+    header('Vary: Origin');
+    header('Access-Control-Allow-Methods: POST, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type');
+    header('Access-Control-Max-Age: 86400');
+}
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
+
 header('Content-Type: application/json; charset=utf-8');
 
 function respond($ok, $msg, $code = 200) {
@@ -214,8 +236,73 @@ if (!is_array($data)) {
     respond(false, 'Ungueltiges JSON', 400);
 }
 
+// Spam-Schutz: verdaechtige Anfragen werden still verworfen (Bot bekommt "Erfolg")
+function looks_like_gibberish($text) {
+    $text = trim((string) $text);
+    if ($text === '') {
+        return false;
+    }
+
+    foreach (preg_split('/\s+/', $text) as $word) {
+        // z.B. "kboXHbwBcjHWqyCAsGG": langes Wort mit vielen Gross-/Klein-Wechseln
+        if (strlen($word) >= 8 && preg_match_all('/[a-z][A-Z]/', $word) >= 2) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function is_rate_limited($ip, $max = 3, $window = 600) {
+    $file = sys_get_temp_dir() . '/np_rate_' . md5($ip);
+    $now = time();
+    $hits = [];
+
+    if (is_readable($file)) {
+        $hits = array_filter(
+            array_map('intval', explode(',', (string) file_get_contents($file))),
+            function ($t) use ($now, $window) { return $t > $now - $window; }
+        );
+    }
+
+    if (count($hits) >= $max) {
+        return true;
+    }
+
+    $hits[] = $now;
+    @file_put_contents($file, implode(',', $hits), LOCK_EX);
+    return false;
+}
+
+$spamReason = '';
+$elapsed = $data['_elapsed'] ?? null;
+$emailLocal = strtolower(strstr((string) ($data['email'] ?? ''), '@', true) ?: '');
+$emailDomain = strtolower(substr(strrchr((string) ($data['email'] ?? ''), '@') ?: '', 1));
+
 if (!empty($data['honeypot'] ?? '')) {
-    respond(true, 'Danke!');
+    $spamReason = 'honeypot';
+} elseif ($requestOrigin === '' || !in_array($requestOrigin, $allowedOrigins, true)) {
+    $spamReason = 'origin';
+} elseif (!is_numeric($elapsed) || $elapsed < 3000) {
+    $spamReason = 'too fast';
+} elseif (in_array($emailDomain, ['gmail.com', 'googlemail.com'], true) && substr_count($emailLocal, '.') >= 3) {
+    $spamReason = 'gmail dot trick';
+} else {
+    foreach (['firstName', 'lastName', 'name', 'fullName', 'message', 'availability'] as $field) {
+        if (looks_like_gibberish($data[$field] ?? '')) {
+            $spamReason = "gibberish in {$field}";
+            break;
+        }
+    }
+}
+
+if ($spamReason === '' && is_rate_limited($_SERVER['REMOTE_ADDR'] ?? 'unknown')) {
+    $spamReason = 'rate limit';
+}
+
+if ($spamReason !== '') {
+    error_log('Spam blockiert (' . $spamReason . ') von ' . ($_SERVER['REMOTE_ADDR'] ?? 'unbekannt'));
+    respond(true, 'Vielen Dank! Deine Nachricht wurde gesendet.');
 }
 
 $formType = trim((string) ($data['formType'] ?? 'contact'));
@@ -234,7 +321,9 @@ $smtpHost = get_config_value('IONOS_EMAIL_HOST', 'smtp.ionos.de');
 $smtpPort = (int) get_config_value('IONOS_EMAIL_PORT', '465');
 $smtpUser = get_config_value('IONOS_EMAIL_USERNAME', 'kontakt@nachhilfe-plus.de');
 $smtpPass = get_config_value('IONOS_EMAIL_PASSWORD', '');
-$smtpRecipient = get_config_value('IONOS_EMAIL_RECIPIENT', $smtpUser);
+$smtpDefaultRecipient = get_config_value('IONOS_EMAIL_RECIPIENT', $smtpUser);
+$smtpApplicationRecipient = 'bewerbung@nachhilfe-plus.de';
+$smtpRecipient = $smtpDefaultRecipient;
 $smtpSecurity = strtolower((string) get_config_value('IONOS_EMAIL_SECURITY', ''));
 
 if ($smtpPass === '') {
@@ -348,6 +437,7 @@ if ($formType === 'contact') {
         respond(false, 'Bitte trage mindestens ein gueltiges Fach ein', 400);
     }
 
+    $smtpRecipient = $smtpApplicationRecipient !== '' ? $smtpApplicationRecipient : $smtpDefaultRecipient;
     $subjectLine = 'Neue Bewerbung: ' . $jobTitle;
     $body  = "Neue Bewerbung von der Website\n\n";
     $body .= "Position: {$jobTitle}\n";

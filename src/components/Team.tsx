@@ -41,20 +41,6 @@ const team: TeamMember[] = [
     subjects: "Biologie, Chemie, Deutsch, Englisch, Französisch",
   },
   {
-    name: "Diana Kanjo",
-    role: "Lehrerin",
-    bio: "Seit mehreren Jahren unterstütze ich Schülerinnen und Schüler als engagierte Nachhilfelehrerin dabei, Lernlücken zu schließen und wieder Freude am Lernen zu entdecken. Mein Schwerpunkt liegt auf den Fächern Mathematik, Englisch und Deutsch. Dabei lege ich großen Wert darauf, individuell auf die Bedürfnisse meiner Schüler einzugehen und eine angenehme, motivierende Lernatmosphäre zu schaffen. Warum mir das wichtig ist? Weil meine Schüler sich auf die Unterrichtsstunden freuen sollen. Lernen funktioniert am besten, wenn man sich wohlfühlt, sich ernst genommen fühlt und merkt, dass man wirklich Fortschritte macht. Genau das möchte ich in jeder Stunde erreichen!.",
-    image: dianaImage,
-    subjects: "Mathe, Deutsch",
-  },
-  {
-    name: "Sara Al-nasiri",
-    role: "Lehrerin",
-    bio: "Ich bin Sarah Al-Naseri, 24 Jahre Nachhilfelehrerin für Deutsch, Mathematik und Englisch Ich studiere derzeit im Masterstudiengang Psychologie und Klinische Psychologie und arbeite seit mehreren Jahren erfolgreich als Nachhilfelehrerin. Mein Schwerpunkt liegt auf Deutsch, Mathematik und Englisch sowie auf Spanisch-Grundkenntnissen und Grammatik. Besonders im Bereich der deutschen Sprache und im Kommunikationstraining bringe ich umfangreiche Erfahrung mit. Ich unterstütze Lernende beim Aufbau sicherer Sprachkompetenz von Grammatik und Wortschatz bis hin zu selbstbewusstem Sprechen. Mehrere Schülerinnen und Schüler habe ich erfolgreich von A1 bis zum B2-Niveau begleitet. Neben meiner Unterrichtstätigkeit spreche ich Deutsch, Arabisch, Englisch, Türkisch sowie Spanisch (Grundkenntnisse), was mir eine mehrsprachige und kultursensible Förderung ermöglicht. Durch mein psychologisches Fachwissen arbeite ich strukturiert, empathisch und individuell angepasst. Mein Ziel ist es, nicht nur schulische Leistungen zu verbessern, sondern auch Motivation, Selbstvertrauen und nachhaltige Lernerfolge zu fördern..",
-    image: logoBgImage,
-    subjects: "Mathe, Englisch",
-  },
-  {
     name: "Sofia D.",
     role: "Lehrerin",
     bio: "Ich bin Sofia und seit 2023 Teil des Teams. Ich erkläre komplexe Themen verständlich und lege Wert darauf, dass sich alle Schüler:innen wohlfühlen und ihre individuellen Ziele erreichen. Geduld und eine ruhige Atmosphäre sind mir besonders wichtig.",

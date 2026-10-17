@@ -236,8 +236,73 @@ if (!is_array($data)) {
     respond(false, 'Ungueltiges JSON', 400);
 }
 
+// Spam-Schutz: verdaechtige Anfragen werden still verworfen (Bot bekommt "Erfolg")
+function looks_like_gibberish($text) {
+    $text = trim((string) $text);
+    if ($text === '') {
+        return false;
+    }
+
+    foreach (preg_split('/\s+/', $text) as $word) {
+        // z.B. "kboXHbwBcjHWqyCAsGG": langes Wort mit vielen Gross-/Klein-Wechseln
+        if (strlen($word) >= 8 && preg_match_all('/[a-z][A-Z]/', $word) >= 2) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function is_rate_limited($ip, $max = 3, $window = 600) {
+    $file = sys_get_temp_dir() . '/np_rate_' . md5($ip);
+    $now = time();
+    $hits = [];
+
+    if (is_readable($file)) {
+        $hits = array_filter(
+            array_map('intval', explode(',', (string) file_get_contents($file))),
+            function ($t) use ($now, $window) { return $t > $now - $window; }
+        );
+    }
+
+    if (count($hits) >= $max) {
+        return true;
+    }
+
+    $hits[] = $now;
+    @file_put_contents($file, implode(',', $hits), LOCK_EX);
+    return false;
+}
+
+$spamReason = '';
+$elapsed = $data['_elapsed'] ?? null;
+$emailLocal = strtolower(strstr((string) ($data['email'] ?? ''), '@', true) ?: '');
+$emailDomain = strtolower(substr(strrchr((string) ($data['email'] ?? ''), '@') ?: '', 1));
+
 if (!empty($data['honeypot'] ?? '')) {
-    respond(true, 'Danke!');
+    $spamReason = 'honeypot';
+} elseif ($requestOrigin === '' || !in_array($requestOrigin, $allowedOrigins, true)) {
+    $spamReason = 'origin';
+} elseif (!is_numeric($elapsed) || $elapsed < 3000) {
+    $spamReason = 'too fast';
+} elseif (in_array($emailDomain, ['gmail.com', 'googlemail.com'], true) && substr_count($emailLocal, '.') >= 3) {
+    $spamReason = 'gmail dot trick';
+} else {
+    foreach (['firstName', 'lastName', 'name', 'fullName', 'message', 'availability'] as $field) {
+        if (looks_like_gibberish($data[$field] ?? '')) {
+            $spamReason = "gibberish in {$field}";
+            break;
+        }
+    }
+}
+
+if ($spamReason === '' && is_rate_limited($_SERVER['REMOTE_ADDR'] ?? 'unknown')) {
+    $spamReason = 'rate limit';
+}
+
+if ($spamReason !== '') {
+    error_log('Spam blockiert (' . $spamReason . ') von ' . ($_SERVER['REMOTE_ADDR'] ?? 'unbekannt'));
+    respond(true, 'Vielen Dank! Deine Nachricht wurde gesendet.');
 }
 
 $formType = trim((string) ($data['formType'] ?? 'contact'));

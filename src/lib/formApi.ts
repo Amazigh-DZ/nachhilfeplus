@@ -9,13 +9,16 @@ const FORM_ENDPOINT = (
   import.meta.env.VITE_FORM_ENDPOINT?.trim() || '/contact.php'
 );
 
+const PAGE_LOADED_AT = Date.now();
+
 export async function submitForm(payload: Record<string, unknown>) {
   const response = await fetch(FORM_ENDPOINT, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(payload),
+    // _elapsed: ms since page load, used server-side to reject instant bot submissions
+    body: JSON.stringify({ ...payload, _elapsed: Date.now() - PAGE_LOADED_AT }),
   });
 
   const rawBody = await response.text();
