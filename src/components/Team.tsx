@@ -6,7 +6,6 @@ import { GraduationCap, ChevronLeft, ChevronRight, ChevronDown, Award } from "lu
 import nassimImage from "../../images/Nassim.jpg";
 import ariImage from "../../images/ari.jpg";
 import dunjaImage from "../../images/dunja.jpg";
-import dianaImage from "../../images/diana-kanjo.jpg";
 import logoBgImage from "../../images/logobg.png";
 import andreImage from "../../images/andre-becker.jpg";
 
