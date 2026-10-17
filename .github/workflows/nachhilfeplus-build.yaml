@@ -32,6 +32,16 @@ jobs:
         with:
           node-version: v22.x
 
+      - name: Create .php.env for Verwaltungs-App integration
+        env:
+          VERWALTUNG_API_URL: ${{ vars.VERWALTUNG_API_URL }}
+          VERWALTUNG_API_SECRET: ${{ vars.VERWALTUNG_API_SECRET }}
+        run: |
+          {
+            echo "VERWALTUNG_API_URL=${VERWALTUNG_API_URL}"
+            echo "VERWALTUNG_API_SECRET=${VERWALTUNG_API_SECRET}"
+          } > public/.php.env
+
       - name: Build Node assets
         env:
           CI: true
