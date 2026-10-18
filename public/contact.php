@@ -574,5 +574,5 @@ if ($result === true) {
 }
 
 error_log('Mail Fehler SMTP: ' . $result);
-respond(false, 'Mailversand fehlgeschlagen: ' . $result, 500);
+respond(false, 'Mailversand fehlgeschlagen. Bitte versuche es spaeter erneut.', 500);
 ?>
