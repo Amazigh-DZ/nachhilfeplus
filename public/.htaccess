@@ -16,7 +16,9 @@ Options -Indexes
 # React Router: unbekannte Pfade (z.B. /impressum) an index.html weiterreichen
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteBase /
+    RewriteRule ^index\.html$ - [L]
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^ index.html [L]
+    RewriteRule . /index.html [L]
 </IfModule>
