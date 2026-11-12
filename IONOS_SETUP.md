@@ -34,6 +34,8 @@ Lege in IONOS oder in deiner PHP-Umgebung diese Werte an:
 - `IONOS_EMAIL_USERNAME=kontakt@nachhilfe-plus.de`
 - `IONOS_EMAIL_PASSWORD=DEIN_IONOS_EMAIL_PASSWORT`
 - `IONOS_EMAIL_RECIPIENT=kontakt@nachhilfe-plus.de`
+- `VERWALTUNG_API_URL=https://manager.nachhilfe-plus.de/api/public/website-submissions`
+- `VERWALTUNG_API_SECRET=DER_GLEICHE_ZUFALLSWERT_WIE_PUBLIC_FORMS_API_KEY_AUF_DEM_MANAGER`
 
 Wenn dein IONOS-Setup stattdessen `587` nutzt, setze:
 
@@ -53,6 +55,8 @@ IONOS_EMAIL_SECURITY=ssl
 IONOS_EMAIL_USERNAME=kontakt@nachhilfe-plus.de
 IONOS_EMAIL_PASSWORD=DEIN_IONOS_EMAIL_PASSWORT
 IONOS_EMAIL_RECIPIENT=kontakt@nachhilfe-plus.de
+VERWALTUNG_API_URL=https://manager.nachhilfe-plus.de/api/public/website-submissions
+VERWALTUNG_API_SECRET=EIN_SEPARATER_ZUFALLSWERT_MIT_MINDESTENS_32_ZEICHEN
 ```
 
 Die Datei `.php.env` ist in `.gitignore` ausgeschlossen und wird nicht mit committed.
@@ -115,3 +119,26 @@ npm run build
 ## 6. Wichtiger Sicherheitshinweis
 
 In einer frueheren Version lag das SMTP-Passwort direkt in `contact.php`. Wenn dieses Passwort schon einmal gepusht oder deployed wurde, solltest du das IONOS-Mailpasswort sofort aendern.
+
+## 7. Sichere Übergabe an den Nachhilfe-Plus-Manager
+
+Kontakt-, Termin- und Bewerbungsformulare werden erst als erfolgreich angezeigt,
+wenn der Manager die Anfrage eindeutig gespeichert hat. Die Übergabe läuft
+Server-zu-Server: Browser erhalten weder `VERWALTUNG_API_SECRET` noch
+`PUBLIC_FORMS_API_KEY`.
+
+1. Erzeuge auf dem Manager-VPS einen neuen, separaten Wert, zum Beispiel mit
+   `openssl rand -hex 32`.
+2. Trage ihn in `/opt/nachhilfe-plus-manager/.env.production` als
+   `PUBLIC_FORMS_API_KEY=...` ein und starte nach dem Manager-Deployment die
+   Container neu.
+3. Trage denselben Wert ausschließlich in die nicht versionierte
+   `.php.env` des PHP-Webspace als `VERWALTUNG_API_SECRET=...` ein. Ergänze
+   dort außerdem `VERWALTUNG_API_URL=https://manager.nachhilfe-plus.de/api/public/website-submissions`.
+4. Lege niemals einen dieser Werte als `VITE_*`-Variable, in GitHub Secrets für
+   den Frontend-Build oder in JavaScript ab.
+
+Der Manager prüft das Geheimnis zeitkonstant, begrenzt den Endpunkt zusätzlich
+pro Server-IP und verwendet eine UUID pro Sendevorgang. Bei einer Wiederholung
+derselben Übertragung wird kein doppelter Interessent und keine doppelte
+Bewerbung erstellt.

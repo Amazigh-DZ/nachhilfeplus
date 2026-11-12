@@ -11,14 +11,21 @@ const FORM_ENDPOINT = (
 
 const PAGE_LOADED_AT = Date.now();
 
-export async function submitForm(payload: Record<string, unknown>) {
+/** Creates an opaque idempotency key. Keep it for retries of one form attempt. */
+export function createSubmissionId() {
+  return crypto.randomUUID();
+}
+
+export async function submitForm(payload: Record<string, unknown>, submissionId: string) {
+  // The caller keeps this UUID while retrying. PHP and the manager therefore
+  // recognize a repeated transmission without receiving browser credentials.
   const response = await fetch(FORM_ENDPOINT, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     // _elapsed: ms since page load, used server-side to reject instant bot submissions
-    body: JSON.stringify({ ...payload, _elapsed: Date.now() - PAGE_LOADED_AT }),
+    body: JSON.stringify({ ...payload, submissionId, _elapsed: Date.now() - PAGE_LOADED_AT }),
   });
 
   const rawBody = await response.text();

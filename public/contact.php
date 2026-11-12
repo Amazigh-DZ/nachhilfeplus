@@ -224,18 +224,16 @@ function smtp_send($host, $port, $user, $pass, $from, $to, $data, $security) {
     return true;
 }
 
-/**
- * Sendet Formulardaten zusätzlich an die Verwaltungs-App.
- * Scheitert diese Funktion, hat das KEINEN Einfluss auf den E-Mail-Versand.
- */
+/** Sendet an die Verwaltungs-App und bestätigt nur eine eindeutige Annahme.
+ * Das Geheimnis liegt ausschließlich in der PHP-Umgebung, nie im Browser. */
 function send_to_verwaltung($apiUrl, $apiSecret, $payload) {
     if (empty($apiUrl) || empty($apiSecret)) {
-        return;
+        return [false, 'Schnittstelle nicht konfiguriert'];
     }
 
     if (!function_exists('curl_init')) {
         error_log('[Verwaltung] cURL nicht verfügbar');
-        return;
+        return [false, 'cURL nicht verfügbar'];
     }
 
     $json = json_encode($payload, JSON_UNESCAPED_UNICODE);
@@ -254,16 +252,25 @@ function send_to_verwaltung($apiUrl, $apiSecret, $payload) {
         CURLOPT_SSL_VERIFYPEER => true,
     ]);
 
-    curl_exec($ch);
+    $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $error    = curl_error($ch);
     curl_close($ch);
 
     if ($error) {
         error_log('[Verwaltung] cURL-Fehler: ' . $error);
+        return [false, 'Übertragung fehlgeschlagen'];
     } elseif ($httpCode < 200 || $httpCode >= 300) {
         error_log('[Verwaltung] HTTP ' . $httpCode . ' beim Import');
+        return [false, 'Verwaltung hat die Anfrage abgelehnt'];
     }
+
+    $decoded = json_decode((string) $response, true);
+    if (!is_array($decoded) || empty($decoded['accepted'])) {
+        error_log('[Verwaltung] keine bestätigte Annahme');
+        return [false, 'Keine bestätigte Annahme'];
+    }
+    return [true, null];
 }
 
 load_php_env_file(__DIR__ . '/.php.env');
@@ -350,6 +357,11 @@ if ($spamReason !== '') {
 $formType = trim((string) ($data['formType'] ?? 'contact'));
 $email = trim((string) ($data['email'] ?? ''));
 $phone = trim((string) ($data['phone'] ?? ''));
+$submissionId = trim((string) ($data['submissionId'] ?? ''));
+
+if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $submissionId)) {
+    respond(false, 'Die Übertragung konnte nicht sicher zugeordnet werden. Bitte Seite neu laden und erneut versuchen.', 400);
+}
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     respond(false, 'E-Mail ungueltig', 400);
@@ -367,10 +379,6 @@ $smtpDefaultRecipient = get_config_value('IONOS_EMAIL_RECIPIENT', $smtpUser);
 $smtpApplicationRecipient = 'bewerbung@nachhilfe-plus.de';
 $smtpRecipient = $smtpDefaultRecipient;
 $smtpSecurity = strtolower((string) get_config_value('IONOS_EMAIL_SECURITY', ''));
-
-if ($smtpPass === '') {
-    respond(false, 'Mailserver ist nicht konfiguriert. Bitte IONOS_EMAIL_PASSWORD setzen.', 500);
-}
 
 if ($smtpSecurity === '') {
     $smtpSecurity = $smtpPort === 587 ? 'tls' : 'ssl';
@@ -482,6 +490,7 @@ if ($formType === 'contact') {
     }
 
     $subjectLines = [];
+    $cleanSubjectEntries = [];
     foreach ($subjects as $entry) {
         if (!is_array($entry)) {
             continue;
@@ -495,6 +504,7 @@ if ($formType === 'contact') {
         }
 
         $subjectLines[] = "- {$subjectName} (bis {$grade})";
+        $cleanSubjectEntries[] = ['name' => $subjectName, 'grade' => $grade];
     }
 
     if (count($subjectLines) === 0) {
@@ -516,11 +526,6 @@ if ($formType === 'contact') {
     }
 
     $nameParts     = explode(' ', $fullName, 2);
-    $subjectNames  = array_values(array_filter(array_map(
-        fn($s) => trim((string) ($s['name'] ?? '')),
-        array_filter($subjects, fn($s) => is_array($s))
-    )));
-
     $verwaltungPayload = [
         'formType'           => 'application',
         'first_name'         => $nameParts[0],
@@ -531,7 +536,7 @@ if ($formType === 'contact') {
         'job_title'          => $jobTitle,
         'message'            => $availability,
         'availability'       => $availability,
-        'subjects'           => $subjectNames,
+        'subjects'           => $cleanSubjectEntries,
         'application_status' => $status,
     ];
 } else {
@@ -540,6 +545,22 @@ if ($formType === 'contact') {
 
 $body .= "\nGesendet: " . date('d.m.Y H:i:s') . "\n";
 $body .= 'IP: ' . ($_SERVER['REMOTE_ADDR'] ?? 'unbekannt') . "\n";
+
+$verwaltungPayload['submissionId'] = $submissionId;
+$verwaltungApiUrl    = get_config_value('VERWALTUNG_API_URL', '');
+$verwaltungApiSecret = get_config_value('VERWALTUNG_API_SECRET', '');
+[$accepted, $integrationError] = send_to_verwaltung($verwaltungApiUrl, $verwaltungApiSecret, $verwaltungPayload);
+if (!$accepted) {
+    error_log('[Verwaltung] Anfrage nicht angenommen: ' . $integrationError);
+    respond(false, 'Deine Anfrage konnte gerade nicht sicher gespeichert werden. Bitte versuche es später erneut.', 503);
+}
+
+// The management record is authoritative. An incomplete SMTP setup must not
+// discard a request which has already been confirmed by the manager.
+if ($smtpPass === '') {
+    error_log('Mail Hinweis: IONOS_EMAIL_PASSWORD fehlt nach bestätigter Speicherung.');
+    respond(true, 'Vielen Dank! Deine Anfrage wurde sicher gespeichert. Wir melden uns in Kürze.');
+}
 
 $encodedSubject = '=?UTF-8?B?' . base64_encode($subjectLine) . '?=';
 $headers = [
@@ -563,16 +584,10 @@ $result   = smtp_send(
     $smtpSecurity
 );
 
-if ($result === true) {
-    // E-Mail wurde erfolgreich gesendet.
-    // Zusätzlich: Datensatz in Verwaltungs-App speichern (fire-and-forget).
-    $verwaltungApiUrl    = get_config_value('VERWALTUNG_API_URL', '');
-    $verwaltungApiSecret = get_config_value('VERWALTUNG_API_SECRET', '');
-    send_to_verwaltung($verwaltungApiUrl, $verwaltungApiSecret, $verwaltungPayload);
-
-    respond(true, 'Vielen Dank! Deine Nachricht wurde gesendet.');
+// The administrative record is authoritative. SMTP remains a notification for
+// the team; an SMTP outage must not make an already saved request look lost.
+if ($result !== true) {
+    error_log('Mail Fehler SMTP nach bestätigter Speicherung: ' . $result);
 }
-
-error_log('Mail Fehler SMTP: ' . $result);
-respond(false, 'Mailversand fehlgeschlagen. Bitte versuche es spaeter erneut.', 500);
+respond(true, 'Vielen Dank! Deine Anfrage wurde sicher gespeichert. Wir melden uns in Kürze.');
 ?>
