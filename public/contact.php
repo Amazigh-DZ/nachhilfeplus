@@ -2,8 +2,6 @@
 $allowedOrigins = [
     'https://nachhilfe-plus.de',
     'https://www.nachhilfe-plus.de',
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
 ];
 
 $requestOrigin = $_SERVER['HTTP_ORIGIN'] ?? '';
@@ -22,6 +20,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
 }
 
 header('Content-Type: application/json; charset=utf-8');
+
+/** Limits mirror the manager API (website-form-intake.ts), so a request can never
+ * pass here and be rejected there afterwards. Counted in characters, not bytes. */
+function too_long($value, $max) {
+    // preg_match_all counts UTF-8 characters without requiring the mbstring extension.
+    return preg_match_all('/./us', (string) $value) > $max;
+}
 
 function respond($ok, $msg, $code = 200) {
     http_response_code($code);
@@ -371,6 +376,14 @@ if (strlen($phone) < 6) {
     respond(false, 'Telefon ist zu kurz', 400);
 }
 
+if (too_long($email, 254)) {
+    respond(false, 'E-Mail ist zu lang', 400);
+}
+
+if (too_long($phone, 40)) {
+    respond(false, 'Telefonnummer ist zu lang (max. 40 Zeichen)', 400);
+}
+
 $smtpHost = get_config_value('IONOS_EMAIL_HOST', 'smtp.ionos.de');
 $smtpPort = (int) get_config_value('IONOS_EMAIL_PORT', '465');
 $smtpUser = get_config_value('IONOS_EMAIL_USERNAME', 'kontakt@nachhilfe-plus.de');
@@ -408,6 +421,18 @@ if ($formType === 'contact') {
 
     if (strlen($message) < 10) {
         respond(false, 'Nachricht zu kurz', 400);
+    }
+
+    if (too_long($firstName, 100) || too_long($lastName, 100)) {
+        respond(false, 'Name ist zu lang (max. 100 Zeichen)', 400);
+    }
+
+    if (too_long($subject, 150)) {
+        respond(false, 'Betreff ist zu lang (max. 150 Zeichen)', 400);
+    }
+
+    if (too_long($message, 4000)) {
+        respond(false, 'Nachricht ist zu lang (max. 4000 Zeichen)', 400);
     }
 
     $subjectLine = 'Neue Kontaktanfrage: ' . $subject;
@@ -452,6 +477,25 @@ if ($formType === 'contact') {
         respond(false, 'Bitte waehle mindestens ein Fach', 400);
     }
 
+    if (count($cleanSubjects) > 20) {
+        respond(false, 'Bitte waehle hoechstens 20 Faecher', 400);
+    }
+
+    foreach ($cleanSubjects as $cleanSubject) {
+        if (too_long($cleanSubject, 100)) {
+            respond(false, 'Ein Fachname ist zu lang (max. 100 Zeichen)', 400);
+        }
+    }
+
+    if (too_long($mode, 100)) {
+        respond(false, 'Unterrichtsart ist ungueltig', 400);
+    }
+
+    $nameParts = preg_split('/\s+/u', $name, 2);
+    if (too_long($nameParts[0], 100) || too_long($nameParts[1] ?? '', 100)) {
+        respond(false, 'Name ist zu lang (max. 100 Zeichen)', 400);
+    }
+
     $subjectLine = 'Neue Termin-Anfrage: ' . $name;
     $body  = "Neue Termin-Anfrage von der Website\n\n";
     $body .= "Name: {$name}\n";
@@ -460,7 +504,6 @@ if ($formType === 'contact') {
     $body .= "Modus: {$mode}\n";
     $body .= 'Faecher: ' . implode(', ', $cleanSubjects) . "\n";
 
-    $nameParts = explode(' ', $name, 2);
     $verwaltungPayload = [
         'formType'   => 'booking',
         'first_name' => $nameParts[0],
@@ -473,7 +516,10 @@ if ($formType === 'contact') {
 } elseif ($formType === 'application') {
     $fullName     = trim((string) ($data['fullName']     ?? ''));
     $status       = trim((string) ($data['status']       ?? ''));
-    $jobTitle     = trim((string) ($data['jobTitle']     ?? 'Initiativbewerbung'));
+    $jobTitle     = trim((string) ($data['jobTitle']     ?? ''));
+    if ($jobTitle === '') {
+        $jobTitle = 'Initiativbewerbung';
+    }
     $availability = trim((string) ($data['availability'] ?? ''));
     $subjects     = $data['subjects'] ?? [];
 
@@ -511,6 +557,38 @@ if ($formType === 'contact') {
         respond(false, 'Bitte trage mindestens ein gueltiges Fach ein', 400);
     }
 
+    // The manager stores applicants with separate first and last names.
+    $nameParts = preg_split('/\s+/u', $fullName, 2);
+    if (!isset($nameParts[1]) || trim($nameParts[1]) === '') {
+        respond(false, 'Bitte gib deinen Vor- und Nachnamen an', 400);
+    }
+
+    if (too_long($nameParts[0], 100) || too_long($nameParts[1], 100)) {
+        respond(false, 'Name ist zu lang (max. 100 Zeichen)', 400);
+    }
+
+    if (too_long($jobTitle, 150)) {
+        respond(false, 'Stellenbezeichnung ist zu lang', 400);
+    }
+
+    if (too_long($status, 100)) {
+        respond(false, 'Status ist zu lang (max. 100 Zeichen)', 400);
+    }
+
+    if (too_long($availability, 2000)) {
+        respond(false, 'Verfuegbarkeit ist zu lang (max. 2000 Zeichen)', 400);
+    }
+
+    if (count($cleanSubjectEntries) > 20) {
+        respond(false, 'Bitte trage hoechstens 20 Faecher ein', 400);
+    }
+
+    foreach ($cleanSubjectEntries as $entry) {
+        if (too_long($entry['name'], 100) || too_long($entry['grade'], 40)) {
+            respond(false, 'Fach oder Klassenstufe ist zu lang', 400);
+        }
+    }
+
     $smtpRecipient = $smtpApplicationRecipient !== '' ? $smtpApplicationRecipient : $smtpDefaultRecipient;
     $subjectLine   = 'Neue Bewerbung: ' . $jobTitle;
     $body  = "Neue Bewerbung von der Website\n\n";
@@ -525,7 +603,6 @@ if ($formType === 'contact') {
         $body .= "\nVerfuegbarkeit:\n{$availability}\n";
     }
 
-    $nameParts     = explode(' ', $fullName, 2);
     $verwaltungPayload = [
         'formType'           => 'application',
         'first_name'         => $nameParts[0],
