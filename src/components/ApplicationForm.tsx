@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, Plus, Trash2, BookOpen, Clock, User } from 'lucide-react';
-import { FormSubmitError, submitForm } from '../lib/formApi';
+import { createSubmissionId, FormSubmitError, submitForm } from '../lib/formApi';
 
 interface Subject {
   name: string;
@@ -19,6 +19,7 @@ export const ApplicationForm = ({ isOpen, onClose, jobTitle }: ApplicationFormPr
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const submissionId = useRef<string | null>(null);
   const [applicantData, setApplicantData] = useState({
     fullName: '',
     email: '',
@@ -57,6 +58,7 @@ export const ApplicationForm = ({ isOpen, onClose, jobTitle }: ApplicationFormPr
     setIsSubmitting(true);
 
     try {
+      submissionId.current ??= createSubmissionId();
       await submitForm({
         formType: 'application',
         jobTitle: jobTitle || 'Initiativbewerbung',
@@ -69,7 +71,7 @@ export const ApplicationForm = ({ isOpen, onClose, jobTitle }: ApplicationFormPr
           name: subject.name.trim(),
           grade: subject.grade,
         })),
-      });
+      }, submissionId.current);
 
       setIsSubmitted(true);
       setSubjects([{ name: '', grade: '' }]);
@@ -80,6 +82,7 @@ export const ApplicationForm = ({ isOpen, onClose, jobTitle }: ApplicationFormPr
         status: 'Schueler',
         availability: '',
       });
+      submissionId.current = null;
 
       setTimeout(() => {
         setIsSubmitted(false);

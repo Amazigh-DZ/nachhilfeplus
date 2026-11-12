@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   BookOpen, 
@@ -34,7 +34,7 @@ import Impressum from './components/Impressum';
 import Datenschutz from './components/Datenschutz';
 import CookieConsent from './components/CookieConsent';
 import Seo from './components/Seo';
-import { FormSubmitError, submitForm } from './lib/formApi';
+import { createSubmissionId, FormSubmitError, submitForm } from './lib/formApi';
 import logoImage from '../images/nachhilfe-plus-logo-quadratisch-removebg-2.png';
 
 // --- Components ---
@@ -284,6 +284,7 @@ const BookingTool = () => {
   const [submitMessage, setSubmitMessage] = useState('');
   const [submitError, setSubmitError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const submissionId = useRef<string | null>(null);
   const [data, setData] = useState({ 
     subjects: [] as string[], 
     customSubject: '',
@@ -320,6 +321,7 @@ const BookingTool = () => {
     ];
 
     try {
+      submissionId.current ??= createSubmissionId();
       await submitForm({
         formType: 'booking',
         name: data.name.trim(),
@@ -327,7 +329,7 @@ const BookingTool = () => {
         phone: data.phone.trim(),
         mode: data.type,
         subjects: selectedSubjects,
-      });
+      }, submissionId.current);
 
       setSubmitMessage('Deine Anfrage wurde erfolgreich gesendet.');
       setStep(1);
@@ -339,6 +341,7 @@ const BookingTool = () => {
         email: '',
         phone: ''
       });
+      submissionId.current = null;
     } catch (error) {
       setSubmitError(
         error instanceof FormSubmitError

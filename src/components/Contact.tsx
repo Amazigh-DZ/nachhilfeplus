@@ -1,8 +1,8 @@
 import { Phone, Mail, MapPin, Clock, Send, Instagram, Facebook, AlertCircle, CheckCircle, Navigation } from 'lucide-react';
 import { FaWhatsapp, FaTelegramPlane } from "react-icons/fa";
 import { SiSignal } from "react-icons/si";
-import { useState } from 'react';
-import { FormSubmitError, submitForm } from '../lib/formApi';
+import { useRef, useState } from 'react';
+import { createSubmissionId, FormSubmitError, submitForm } from '../lib/formApi';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -18,6 +18,7 @@ const Contact = () => {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const submissionId = useRef<string | null>(null);
   const locationName = 'Nachhilfe Plus';
   const locationAddress = 'Gotmarstr. 3, 37073 Goettingen';
   const locationQuery = encodeURIComponent(`${locationName}, ${locationAddress}`);
@@ -77,6 +78,7 @@ const Contact = () => {
     setSuccessMessage('');
 
     try {
+      submissionId.current ??= createSubmissionId();
       await submitForm({
         formType: 'contact',
         firstName: formData.firstName.trim(),
@@ -86,7 +88,7 @@ const Contact = () => {
         subject: formData.subject,
         message: formData.message.trim(),
         honeypot: formData.honeypot,
-      });
+      }, submissionId.current);
 
       setSuccessMessage('Vielen Dank! Deine Nachricht wurde erfolgreich gesendet. Wir melden uns in Kuerze bei dir!');
       setFormData({
@@ -98,6 +100,7 @@ const Contact = () => {
         message: '',
         honeypot: ''
       });
+      submissionId.current = null;
     } catch (err) {
       console.error('Form submission error:', err);
       setErrorMessage(
